@@ -10,4 +10,5 @@
 /client/dist/
 /client/node_modules/
 /client/proxy.conf.json
+/client/nbproject/
 /apache2
