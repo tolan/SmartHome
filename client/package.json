@@ -4,8 +4,8 @@
     "scripts": {
         "ng": "./node_modules/@angular/cli/bin/ng",
         "start": "ng serve --port 4200 --disableHostCheck --proxy-config proxy.conf.json --base-href /",
-        "build": "rm -f ./dist/client/*.gz && ng build --prod --aot",
-        "compress": "node ./node_modules/gzipper/bin/index.js c ./dist --verbose",
+        "build": "rm -f ./dist/client/*.gz && ng build --prod --aot && cp ./dist/client/* ./public",
+        "compress": "node ./node_modules/gzipper/bin/index.js c ./dist --verbose && cp ./dist/client/* ./public",
         "stats": "ng build --stats-json",
         "analyze": "node ./node_modules/webpack-bundle-analyzer/lib/bin/analyzer.js -h 0.0.0.0 -p 4200 ./dist/client/stats-es2015.json",
         "test": "ng test",
