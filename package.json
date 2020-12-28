@@ -1,0 +1,12 @@
+{
+    "name": "smart-home",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "@angular/cli": "^8.3.17"
+    },
+    "scripts": {
+        "ng": "./node_modules/@angular/cli/bin/ng"
+    },
+    "devDependencies": {}
+}

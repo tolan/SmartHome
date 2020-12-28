@@ -1,0 +1,13 @@
+/my.log
+/redis.conf
+/config.php
+/logs/
+/firmwares/
+/cache/
+/node_modules/
+/nbproject/
+/vendor/
+/client/dist/
+/client/node_modules/
+/client/proxy.conf.json
+/apache2
