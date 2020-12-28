@@ -7,7 +7,7 @@
         </whitelist>
     </filter>
     <testsuites>
-        <testsuite name="Lights">
+        <testsuite name="SmartHome">
             <directory suffix=".php">./tests/Unit/Tests/</directory>
         </testsuite>
     </testsuites>
