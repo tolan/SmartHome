@@ -1,0 +1,14 @@
+<div class="firmwares-list">
+    <mat-list>
+        <firmwares-row-header (onAdd)="firmwareAdd()"></firmwares-row-header>
+    </mat-list>
+    <mat-list *ngFor="let firmware of firmwares">
+        <mat-divider></mat-divider>
+        <firmwares-row
+            [firmware]="firmware"
+            (onSave)="firmwareSave($event)"
+            (onRemove)="firmwareRemove($event)"
+            (onFileUpload)="uploadFile(firmware, $event)"
+            ></firmwares-row>
+    </mat-list>
+</div>

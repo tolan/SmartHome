@@ -1,0 +1,22 @@
+<div class="switch">
+    <mat-slide-toggle class="value" [checked]="data.value" (change)="changeValue($event)" labelPosition="before">
+        <span *ngIf="!simple">{{data.value ? "Zhasnout" : "Rozsvítit"}}</span>
+    </mat-slide-toggle>
+
+    <div class="delay" *ngIf="!simple">
+        <span class="delay-value">Zpoždění:</span>
+        <mat-slider
+            min="0"
+            max="120"
+            step="1"
+            thumbLabel="true"
+            tickInterval="auto"
+            [value]="data.delay.value"
+            (change)="changeDelayValue($event)"
+            >
+        </mat-slider>
+        <span class="delay-value-title">{{data.delay.value + ' ' + data.delay.unit}}</span>
+        <mat-slide-toggle [checked]="data.delay.unit === 'min'" (change)="changeDelayUnit($event)">
+        </mat-slide-toggle>
+    </div>
+</div>

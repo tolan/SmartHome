@@ -1,0 +1,34 @@
+<div class="fade">
+    <div class="value">
+        <span class="title">Postupná změna:</span>
+        <mat-slider
+            min="0"
+            [max]="max"
+            step="1"
+            thumbLabel="true"
+            tickInterval="auto"
+            [value]="data.value"
+            (change)="changeValue($event)"
+            >
+        </mat-slider>
+        <span class="value-title">({{data.value}})</span>
+    </div>
+
+    <div class="delay">
+        <span class="title">Doba trvání:</span>
+        <mat-slider
+            min="1"
+            max="90"
+            step="1"
+            thumbLabel="true"
+            tickInterval="auto"
+            [value]="data.delay.value"
+            (change)="changeDelayValue($event)"
+            >
+        </mat-slider>
+        <span class="value-title">{{data.delay.value + ' min'}}</span>
+    </div>
+
+    <button mat-flat-button color="primary" (click)="onStart()" *ngIf="!data.running">Spustit</button>
+    <button mat-flat-button color="warn" (click)="onStop()" *ngIf="data.running">Zastavit</button>
+</div>

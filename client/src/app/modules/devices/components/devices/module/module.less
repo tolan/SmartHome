@@ -1,0 +1,88 @@
+.header {
+    width: 100%;
+
+    .title {
+        position: relative;
+        top: 6px;
+        font-size: 18px;
+        font-weight: 500;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    switch {
+        display: inline-block;
+    }
+
+    .toggle, .reset {
+        position: relative;
+        top: 4px;
+        width: 64px;
+        display: inline-block;
+    }
+
+    .toggle {
+        float: right;
+    }
+
+    pwm {
+        margin-left: 12px;
+        display: inline-block;
+        float: right;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .header {
+        pwm {
+            float: none;
+            display: block;
+        }
+    }
+
+    .open {
+        .header {
+            pwm {
+                float: none;
+                display: none;
+            }
+        }
+    }
+}
+
+.open {
+    .content {
+        transition: max-height 0.25s ease-in;
+        max-height: 1000px;
+
+        .control {
+            transition: opacity 0.1s linear .25s;
+        }
+    }
+
+    .header {
+        pwm {
+            opacity: 0;
+            transition: opacity 0.25s linear;
+        }
+    }
+}
+
+.close {
+    .content {
+        transition: max-height 0.25s ease-out .1s;
+        overflow: hidden;
+        max-height: 0;
+
+        .control {
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+    }
+
+    .header {
+        pwm {
+            transition: opacity 0.25s linear .25s;
+        }
+    }
+}

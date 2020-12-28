@@ -1,0 +1,61 @@
+<mat-list-item class="groups-row" *ngIf="!isRemoving && !isEditing">
+    <div class="id">
+        {{group.group.id}}
+    </div>
+    <div class="name">
+        {{group.group.name}}
+    </div>
+    <div class="rooms">
+        {{group.rooms | pluck: 'name' | join }}
+    </div>
+    <div class="permissions">
+        {{group.permissions | pluck: 'name' | join }}
+    </div>
+    <div class="actions">
+        <button mat-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+        <button mat-button (click)="remove()"><mat-icon>delete</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="groups-row" *ngIf="isEditing">
+    <div class="id">
+        {{group.group.id}}
+    </div>
+    <div class="name">
+        <form [formGroup]="groupForm">
+            <mat-form-field>
+                <input matInput formControlName="name">
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="rooms">
+        <form [formGroup]="extendedForm">
+            <mat-form-field>
+                <mat-select multiple [value]="group.rooms" [compareWith]="itemComparator" formControlName="rooms">
+                    <mat-option *ngFor="let room of rooms" [value]="room.room">{{room.room.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="permissions">
+        <form [formGroup]="extendedForm">
+            <mat-form-field>
+                <mat-select multiple [value]="group.permissions" [compareWith]="itemComparator" formControlName="permissions">
+                    <mat-option *ngFor="let perm of permissions" [value]="perm.permission">{{perm.permission.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="actions">
+        <button mat-button (click)="save()"><mat-icon>save</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="groups-row" *ngIf="isRemoving">
+    <div class="removing">
+        <span>Opravdu se má smazat skupina {{group.group.name}}?</span>
+        <button mat-button (click)="save()"><mat-icon>done</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>

@@ -1,0 +1,9 @@
+<div class="container">
+    <navigation></navigation>
+    <mat-progress-bar *ngIf="showLoader" mode="indeterminate"></mat-progress-bar>
+    <div class="progress-spacer" *ngIf="!showLoader"></div>
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+    <notification></notification>
+</div>

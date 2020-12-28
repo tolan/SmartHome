@@ -1,0 +1,9 @@
+<div class="rooms-list">
+    <mat-list>
+        <rooms-row-header (onAdd)="roomAdd()"></rooms-row-header>
+    </mat-list>
+    <mat-list *ngFor="let room of rooms">
+        <mat-divider></mat-divider>
+        <rooms-row [room]="room" (onSave)="roomSave($event)" (onRemove)="roomRemove($event)"></rooms-row>
+    </mat-list>
+</div>

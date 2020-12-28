@@ -1,0 +1,115 @@
+<div class="device" *ngIf="!isRemoving && !isEditing">
+    <div class="info-basic">
+        <div class="left">
+            <div class="id">#</div>
+            <div class="name">Název</div>
+            <div class="mac">MAC</div>
+            <div class="ip-address">IP adresa</div>
+            <div class="last-registration">Poslední registrace</div>
+            <div class="firmware">Firmware</div>
+            <div class="room">Místnost</div>
+        </div>
+        <div class="right">
+            <div class="id">{{device.device.id}}</div>
+            <div class="name">{{device.device.name}}</div>
+            <div class="mac">{{device.device.mac}}</div>
+            <div class="ip-address">{{device.device.ipAddress}}</div>
+            <div class="last-registration">{{device.device.lastRegistration | date:'d.M.yyyy H:mm:ss':'Europe/Prague'}}</div>
+            <div class="firmware">{{device.firmware ? device.firmware.name : 'Nenastaveno'}}</div>
+            <div class="room">{{device.room ? device.room.name : 'Nenastaveno'}}</div>
+        </div>
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="modules">
+        <mat-tab-group *ngIf="device.modules">
+            <mat-tab *ngFor="let module of device.modules;" label="{{module.module.name}} ({{module.module.id}})">
+                <device-row-module [module]="module" ></device-row-module>
+            </mat-tab>
+        </mat-tab-group>
+
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="actions">
+        <button mat-button (click)="restart()" matTooltip="Restart"><mat-icon>settings_backup_restore</mat-icon></button>
+        <mat-divider></mat-divider>
+        <button mat-button (click)="edit()" matTooltip="Úpravy"><mat-icon>edit</mat-icon></button>
+        <button mat-button (click)="remove()" matTooltip="Smazání"><mat-icon>delete</mat-icon></button>
+    </div>
+</div>
+
+<div class="device editing" *ngIf="isEditing">
+    <div class="info-basic">
+        <div class="left">
+            <div class="id">#</div>
+            <div class="name">Název</div>
+            <div class="mac">MAC</div>
+            <div class="ip-address">IP adresa</div>
+            <div class="last-registration">Poslední registrace</div>
+            <div class="firmware">Firmware</div>
+            <div class="room">Místnost</div>
+        </div>
+        <div class="right">
+            <div class="id">{{device.device.id}}</div>
+            <div class="name">
+                <form [formGroup]="basicForm">
+                    <mat-form-field>
+                        <input matInput formControlName="name">
+                    </mat-form-field>
+                </form>
+            </div>
+            <div class="mac">{{device.device.mac}}</div>
+            <div class="ip-address">{{device.device.ipAddress}}</div>
+            <div class="last-registration">{{device.device.lastRegistration | date:'d.M.yyyy H:mm:ss':'Europe/Prague'}}</div>
+            <div class="firmware">
+                <form [formGroup]="firmwareForm">
+                    <mat-form-field>
+                        <mat-select [value]="device.firmware" formControlName="firmware" [compareWith]="selectComparator">
+                            <mat-option *ngFor="let firmware of firmwares" [value]="firmware.firmware">
+                                {{firmware.firmware.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </form>
+            </div>
+            <div class="room">
+                <form [formGroup]="roomForm">
+                    <mat-form-field>
+                        <mat-select [value]="device.room" formControlName="room" [compareWith]="selectComparator">
+                            <mat-option *ngFor="let room of rooms" [value]="room.room">
+                                {{room.room.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </form>
+            </div>
+        </div>
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="modules">
+        <mat-tab-group *ngIf="modules.length">
+            <mat-tab *ngFor="let module of modules;">
+                <ng-template mat-tab-label>
+                    <span class="name-label">{{module.module.name}} ({{module.module.id}})</span>
+                    <button mat-button class="name-button" (click)="removeModule(module)"><mat-icon>close</mat-icon></button>
+                </ng-template>
+                <device-row-module [module]="module" (onChange)="changeModule($event)" isEditing="true" ></device-row-module>
+            </mat-tab>
+        </mat-tab-group>
+        <div class="actions">
+            <button mat-button (click)="addModule()"><mat-icon>add</mat-icon></button>
+        </div>
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="actions">
+        <button mat-button (click)="save()"><mat-icon>save</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</div>
+
+<div class="device" *ngIf="isRemoving">
+    <div class="removing">
+        <span>Opravdu se má smazat zařízení {{device.device.name}}?</span>
+        <button mat-button (click)="save()"><mat-icon>done</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</div>

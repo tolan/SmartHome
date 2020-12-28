@@ -1,0 +1,10 @@
+<div class="devices-list">
+    <device-row *ngFor="let device of devices; last as last"
+                [device]="device"
+                (onSave)="deviceSave($event)"
+                (onRemove)="deviceRemove($event)"
+                (onRestart)="deviceRestart($event)"
+                >
+        <mat-divider *ngIf="!last"></mat-divider>
+    </device-row>
+</div>

@@ -1,0 +1,10 @@
+<mat-sidenav-container class="sidepanel-container" *ngIf="!hidden" autosize>
+    <mat-sidenav #drawer mode="side" opened>
+        <mat-list>
+            <rooms></rooms>
+        </mat-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="content">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,61 @@
+<mat-list-item class="rooms-row" *ngIf="!isRemoving && !isEditing">
+    <div class="id">
+        {{room.room.id}}
+    </div>
+    <div class="name">
+        {{room.room.name}}
+    </div>
+    <div class="groups">
+        {{room.groups | pluck: 'name' | join }}
+    </div>
+    <div class="devices">
+        {{room.devices | pluck: 'name' | join }}
+    </div>
+    <div class="actions">
+        <button mat-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+        <button mat-button (click)="remove()"><mat-icon>delete</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="rooms-row" *ngIf="isEditing">
+    <div class="id">
+        {{room.room.id}}
+    </div>
+    <div class="name">
+        <form [formGroup]="roomForm">
+            <mat-form-field>
+                <input matInput formControlName="name">
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="groups">
+        <form [formGroup]="extendedForm">
+            <mat-form-field>
+                <mat-select multiple [value]="room.groups" [compareWith]="itemComparator" formControlName="groups">
+                    <mat-option *ngFor="let group of groups" [value]="group.group">{{group.group.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="devices">
+        <form [formGroup]="extendedForm">
+            <mat-form-field>
+                <mat-select multiple [value]="room.devices" [compareWith]="itemComparator" formControlName="devices">
+                    <mat-option *ngFor="let device of devices" [value]="device.device">{{device.device.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="actions">
+        <button mat-button (click)="save()"><mat-icon>save</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="rooms-row" *ngIf="isRemoving">
+    <div class="removing">
+        <span>Opravdu se má smazat místnost {{room.room.name}}?</span>
+        <button mat-button (click)="save()"><mat-icon>done</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>

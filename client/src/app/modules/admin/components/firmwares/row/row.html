@@ -1,0 +1,45 @@
+<mat-list-item class="firmwares-row" *ngIf="!isRemoving && !isEditing">
+    <div class="id">
+        {{firmware.firmware.id}}
+    </div>
+    <div class="name">
+        {{firmware.firmware.name}}
+    </div>
+    <div class="file">
+        {{firmware.firmware.filename}}
+    </div>
+    <div class="actions">
+        <button mat-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+        <button mat-button (click)="remove()"><mat-icon>delete</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="firmwares-row" *ngIf="isEditing">
+    <div class="id">
+        {{firmware.firmware.id}}
+    </div>
+    <div class="name">
+        <form [formGroup]="firmwareForm">
+            <mat-form-field>
+                <input matInput formControlName="name">
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="file">
+        <form [formGroup]="uploadForm">
+            <input type="file" formControlName="file" (change)="fileUpload($event)">
+        </form>
+    </div>
+    <div class="actions">
+        <button mat-button (click)="save()"><mat-icon>save</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="firmwares-row" *ngIf="isRemoving">
+    <div class="removing">
+        <span>Opravdu se má smazat firmware {{firmware.firmware.name}}?</span>
+        <button mat-button (click)="save()"><mat-icon>done</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>

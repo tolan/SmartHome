@@ -1,0 +1,20 @@
+<div class="devices">
+    <div class="container">
+        <div *ngFor="let device of getDevices(); last as lastDevice">
+            <div *ngFor="let module of device.modules; last as lastModule">
+                <module class="module"
+                        [roomId]="roomId"
+                        [device]="device"
+                        [module]="module"
+                        [opened]="opened[module.module.id]"
+                        [edited]="(edited[device.device.id] || {})[module.module.id] || {}"
+                        (onControl)="onModuleControl(device, module, $event)"
+                        (onEdit)="onModuleEdit(device, module, $event)"
+                        (onReset)="onModuleReset(device, module)"
+                        (onToggle)="onModuleToggle(module)">
+                </module>
+                <mat-divider *ngIf="!(lastDevice && lastModule)"></mat-divider>
+            </div>
+        </div>
+    </div>
+</div>

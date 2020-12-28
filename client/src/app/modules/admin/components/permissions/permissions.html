@@ -1,0 +1,9 @@
+<div class="perms-list">
+    <mat-list>
+        <permissions-row-header></permissions-row-header>
+    </mat-list>
+    <mat-list *ngFor="let perm of perms">
+        <mat-divider></mat-divider>
+        <permissions-row [permission]="perm" (onSave)="permSave($event)"></permissions-row>
+    </mat-list>
+</div>

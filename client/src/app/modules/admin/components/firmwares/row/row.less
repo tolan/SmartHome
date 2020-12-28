@@ -1,0 +1,41 @@
+@import "../../../../../mixins.less";
+
+.firmwares-row {
+    height: 75px;
+
+    .id {
+        width: 50px;
+    }
+
+    .name {
+        .elipsis();
+        width: 250px;
+    }
+
+    .file {
+        .elipsis();
+        flex: 1;
+
+        mat-form-field {
+            width: calc(100% - 50px);
+        }
+    }
+
+    .removing {
+        flex: 1;
+        text-align: center;
+
+        span {
+            display: inline-block;
+            margin-right: 12px;
+        }
+    }
+
+    mat-icon {
+        cursor: pointer;
+    }
+
+    form {
+        display: flex;
+    }
+}

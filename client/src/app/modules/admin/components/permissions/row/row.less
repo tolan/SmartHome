@@ -1,0 +1,26 @@
+@import "../../../../../mixins.less";
+
+.perms-row {
+    height: 75px;
+
+    .id {
+        width: 50px;
+    }
+
+    .name {
+        .elipsis();
+        width: 250px;
+    }
+
+    .type {
+        flex: 1;
+    }
+
+    mat-icon {
+        cursor: pointer;
+    }
+
+    form {
+        display: flex;
+    }
+}

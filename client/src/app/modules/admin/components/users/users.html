@@ -1,0 +1,9 @@
+<div class="users-list">
+    <mat-list>
+        <users-row-header (onAdd)="userAdd()"></users-row-header>
+    </mat-list>
+    <mat-list *ngFor="let user of users">
+        <mat-divider></mat-divider>
+        <users-row [user]="user" (onSave)="userSave($event)" (onRemove)="userRemove($event)"></users-row>
+    </mat-list>
+</div>

@@ -1,0 +1,94 @@
+@import "../../../../../mixins.less";
+
+.device {
+
+    border: rgba(0, 0, 0, 0.12) solid 1px;
+    border-radius: 3px;
+    margin: 6px;
+    padding: 6px;
+    display: flex;
+    background-color: #fff;
+
+    .info-basic {
+        width: 320px;
+        padding: 12px;
+
+        .left, .right {
+            display: inline-block;
+            width: 50%;
+        }
+    }
+
+    .actions {
+        width: 64px;
+        padding: 3px
+    }
+
+    .modules {
+        flex: 1;
+    }
+
+    .removing {
+        flex: 1;
+        text-align: center;
+
+        span {
+            display: inline-block;
+            margin-right: 12px;
+        }
+    }
+
+}
+
+.editing {
+    .left {
+        .name, .firmware, .room {
+            padding-top: 20px;
+            height: 65px;
+        }
+    }
+
+    .right {
+        mat-form-field {
+            width: 100%;
+        }
+    }
+
+    .modules {
+        display: flex;
+
+        mat-tab-group {
+            width: 528px;
+        }
+
+        .mat-tab-label {
+            padding-left: 0;
+            padding-right: 0;
+            text-align: left;
+            width: 100%;
+        }
+
+        .name-label {
+            .elipsis();
+            position: absolute;
+            right: 33%;
+            width: calc(100% - 64px);
+        }
+
+        .name-button {
+            position: absolute;
+            right: 0%;
+            padding: 0 16px;
+        }
+
+        .actions {
+            margin-top: -2px;
+            margin-left: -5px;
+
+            button {
+                border-bottom: 1px solid rgba(0,0,0,.12);
+                height: 48px;
+            }
+        }
+    }
+}

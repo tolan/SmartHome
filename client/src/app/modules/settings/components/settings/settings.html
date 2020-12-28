@@ -1,0 +1,69 @@
+<div class="settings">
+    <div class="user" *ngIf="user && !isEditing">
+        <div class="info">
+            <div>
+                <div class="username">
+                    <span>Jméno</span>
+                    <span>{{user.user.username}}</span>
+                </div>
+                <div class="password">
+                    <span>Heslo</span>
+                    <span>*****</span>
+                </div>
+                <div class="groups">
+                    <span>Skupiny</span>
+                    <span>{{user.groups | pluck: 'name' | join}}</span>
+                </div>
+                <div class="apiToken">
+                    <span>API Token</span>
+                    <span>{{user.user.apiToken}}</span>
+                    <button mat-button (click)="generateApiToken()"><mat-icon>autorenew</mat-icon></button>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <button mat-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+        </div>
+    </div>
+
+    <div class="user editing" *ngIf="user && isEditing">
+        <div class="info">
+            <div>
+                <div class="username">
+                    <span>Jméno</span>
+                    <span>{{user.user.username}}</span>
+                </div>
+                <div class="password">
+                    <form [formGroup]="userForm">
+                        <div>
+                            <mat-label><span>Staré heslo</span></mat-label>
+                            <mat-form-field>
+                                <input matInput type="password" formControlName="oldPass">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-label><span>Nové heslo</span></mat-label>
+                            <mat-form-field>
+                                <input matInput type="password" formControlName="newPass">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-label><span>Ověření hesla</span></mat-label>
+                            <mat-form-field>
+                                <input matInput type="password" formControlName="newPassRepeat">
+                            </mat-form-field>
+                        </div>
+                    </form>
+                </div>
+                <div class="groups">
+                    <span>Skupiny</span>
+                    <span>{{user.groups | pluck: 'name' | join}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+            <button mat-button (click)="save()"><mat-icon>save</mat-icon></button>
+        </div>
+    </div>
+</div>

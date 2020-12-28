@@ -1,0 +1,9 @@
+<div class="groups-list">
+    <mat-list>
+        <groups-row-header (onAdd)="groupAdd()"></groups-row-header>
+    </mat-list>
+    <mat-list *ngFor="let group of groups">
+        <mat-divider></mat-divider>
+        <groups-row [group]="group" (onSave)="groupSave($event)" (onRemove)="groupRemove($event)"></groups-row>
+    </mat-list>
+</div>

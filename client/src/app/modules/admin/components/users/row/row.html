@@ -1,0 +1,59 @@
+<mat-list-item class="users-row" *ngIf="!isRemoving && !isEditing">
+    <div class="id">
+        {{user.user.id}}
+    </div>
+    <div class="username">
+        {{user.user.username}}
+    </div>
+    <div class="password">
+        *****
+    </div>
+    <div class="groups">
+        {{user.groups | pluck: 'name' | join }}
+    </div>
+    <div class="actions">
+        <button mat-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+        <button mat-button (click)="remove()"><mat-icon>delete</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="users-row" *ngIf="isEditing">
+    <div class="id">
+        {{user.user.id}}
+    </div>
+    <div class="username">
+        <form [formGroup]="userForm">
+            <mat-form-field>
+                <input matInput formControlName="username">
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="password">
+        <form [formGroup]="userForm">
+            <mat-form-field>
+                <input matInput formControlName="password">
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="groups">
+        <form [formGroup]="groupsForm">
+            <mat-form-field>
+                <mat-select multiple [value]="user.groups" [compareWith]="groupComparator" formControlName="groups">
+                    <mat-option *ngFor="let group of groups" [value]="group.group">{{group.group.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="actions">
+        <button mat-button (click)="save()"><mat-icon>save</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>
+
+<mat-list-item class="users-row" *ngIf="isRemoving">
+    <div class="removing">
+        <span>Opravdu se má smazat uživatel {{user.user.username}}?</span>
+        <button mat-button (click)="save()"><mat-icon>done</mat-icon></button>
+        <button mat-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+    </div>
+</mat-list-item>

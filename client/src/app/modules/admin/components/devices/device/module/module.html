@@ -1,0 +1,64 @@
+<div class="module" *ngIf="!isEditing">
+    <div class="info">
+        <div class="pin">
+            <span>Pin</span>
+            <span>{{module.module.settingsData.pin}}</span>
+        </div>
+        <div class="channel">
+            <span>PWM Kanál</span>
+            <span>{{module.module.settingsData.channel}}</span>
+        </div>
+        <div class="resolution">
+            <span>PWM Rozlišení</span>
+            <span>{{module.module.settingsData.resolution}}</span>
+        </div>
+    </div>
+    <device-row-module-control
+        *ngFor="let type of availableControlTypes;"
+        [control]="getControlData(type)"
+        >
+    </device-row-module-control>
+</div>
+
+<div class="module editing" *ngIf="isEditing">
+    <div class="forms">
+        <form [formGroup]="moduleForm">
+            <mat-form-field>
+                <mat-label>Název modulu</mat-label>
+                <input matInput formControlName="name" (change)="changeModule()">
+            </mat-form-field>
+        </form>
+        <form [formGroup]="settingsForm">
+            <mat-form-field>
+                <mat-label>Pin</mat-label>
+                <input matInput formControlName="pin" (change)="changeModule()">
+            </mat-form-field>
+        </form>
+        <form [formGroup]="settingsForm">
+            <mat-form-field>
+                <mat-label>PWM Kanál</mat-label>
+                <input matInput formControlName="channel" (change)="changeModule()">
+            </mat-form-field>
+        </form>
+        <form [formGroup]="settingsForm">
+            <mat-form-field>
+                <mat-label>PWM Rozlišení</mat-label>
+                <input matInput type="number" min="8" max="15" list="defaultResolutions" formControlName="resolution" (change)="changeModule()">
+                <datalist id="defaultResolutions">
+                    <option value="8">
+                    <option value="10">
+                    <option value="12">
+                    <option value="15">
+                </datalist>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="controls">
+        <device-row-module-control
+            *ngFor="let type of availableControlTypes;"
+            [control]="getControlData(type)"
+            (onChange)="changeControl($event)"
+            isEditing="true">
+        </device-row-module-control>
+    </div>
+</div>

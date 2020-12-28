@@ -1,0 +1,19 @@
+<div class="login">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+        <p>
+        <mat-form-field>
+            <input matInput placeholder="Jméno" focus formControlName="username">
+        </mat-form-field>
+        </p>
+
+        <p>
+        <mat-form-field>
+            <input matInput placeholder="Heslo" type="password" formControlName="password">
+        </mat-form-field>
+        </p>
+
+        <p>
+            <button mat-flat-button >Přihlásit</button>
+        </p>
+    </form>
+</div>

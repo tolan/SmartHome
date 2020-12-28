@@ -1,0 +1,27 @@
+<mat-sidenav-container class="sidepanel-container" *ngIf="!hidden">
+    <mat-sidenav mode="side" opened>
+        <mat-list>
+            <mat-list-item routerLink='users' routerLinkActive="active">
+                <span>Uživatelé</span>
+            </mat-list-item>
+            <mat-list-item routerLink='groups' routerLinkActive="active">
+                <span>Skupiny</span>
+            </mat-list-item>
+            <mat-list-item routerLink='permissions' routerLinkActive="active">
+                <span>Oprávnění</span>
+            </mat-list-item>
+            <mat-list-item routerLink='rooms' routerLinkActive="active">
+                <span>Místnosti</span>
+            </mat-list-item>
+            <mat-list-item routerLink='devices' routerLinkActive="active">
+                <span>Zařízení</span>
+            </mat-list-item>
+            <mat-list-item routerLink='firmwares' routerLinkActive="active">
+                <span>Firmware</span>
+            </mat-list-item>
+        </mat-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="content">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

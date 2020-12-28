@@ -1,0 +1,70 @@
+<mat-card [ngClass]="opened ? 'open' : 'close'">
+    <div class="header">
+        <ng-container *ngFor="let control of controls" >
+            <switch
+                *ngIf="control.control.type === ControlType.SWITCH"
+                [control]="control"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                [simple]="true"
+                >
+            </switch>
+        </ng-container>
+        <div class="title" (click)="toggle()">
+            {{!roomId ? device.room.name + ' / ' : ''}}{{module.module.name}}
+        </div>
+        <div class="reset" *ngIf="(edited | keyvalue)?.length">
+            <button mat-button (click)="reset()">
+                <mat-icon>settings_backup_restore</mat-icon>
+            </button>
+        </div>
+        <div class="toggle">
+            <button mat-button (click)="toggle()">
+                <mat-icon *ngIf="!opened">keyboard_arrow_down</mat-icon>
+                <mat-icon *ngIf="opened">keyboard_arrow_up</mat-icon>
+            </button>
+        </div>
+        <ng-container *ngFor="let control of controls" >
+            <pwm
+                class="control"
+                *ngIf="control.control.type === ControlType.PWM"
+                [simple]="true"
+                [control]="control"
+                [module]="module"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                >
+            </pwm>
+        </ng-container >
+    </div>
+    <div class="content">
+        <ng-container *ngFor="let control of controls" [ngSwitch]="control.control.type" >
+            <fade
+                class="control"
+                *ngSwitchCase="ControlType.FADE"
+                [control]="control"
+                [module]="module"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                >
+            </fade>
+            <pwm
+                class="control"
+                *ngIf="control.control.type === ControlType.PWM"
+                [control]="control"
+                [module]="module"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                >
+            </pwm>
+            <switch
+                class="control"
+                *ngSwitchCase="ControlType.SWITCH"
+                [control]="control"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                >
+            </switch>
+        </ng-container>
+    </div>
+</mat-card>

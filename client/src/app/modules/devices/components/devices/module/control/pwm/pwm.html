@@ -1,0 +1,39 @@
+<div class="pwm">
+    <form class="value" [formGroup]="controlForm">
+        <span class="title">Intenzita:</span>
+        <button class="minus" mat-button (click)="minus()">
+            <mat-icon>remove_circle_outline</mat-icon>
+        </button>
+        <mat-form-field>
+            <input
+                matInput
+                type="number"
+                min="0"
+                [max]="max"
+                (change)="changeValue($event)"
+                list="preferedValues"
+                formControlName="value"
+                >
+            <span matSuffix>/{{max}}</span>
+            <datalist id="preferedValues">
+                <option value="0">
+                <option value="1">
+                <option [value]="max">
+            </datalist>
+        </mat-form-field>
+        <button class="plus" mat-button (click)="plus()">
+            <mat-icon>add_circle_outline</mat-icon>
+        </button>
+        <mat-slider
+            *ngIf="!simple"
+            min="0"
+            [max]="max"
+            step="1"
+            thumbLabel="true"
+            tickInterval="auto"
+            (input)="changeValue($event)"
+            formControlName="value"
+            >
+        </mat-slider>
+    </form>
+</div>
