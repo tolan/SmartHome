@@ -9,5 +9,6 @@
 /vendor/
 /client/dist/
 /client/node_modules/
+/client/nbproject/
 /client/proxy.conf.json
 /apache2
