@@ -25,7 +25,7 @@ use SmartHome\Common\Service;
 use SmartHome\Database\EntityQuery;
 
 /**
- * This file defines class for ...
+ * This file defines class for registration worker
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
@@ -34,22 +34,36 @@ class Registration extends AWorker {
     const INIT = 'init';
 
     /**
+     * Common service
+     *
      * @var Service
      */
     private $_service;
 
     /**
+     * MQTT client
+     *
      * @var MQTT
      */
     private $_mqtt;
 
-    public function __construct (Container $container) {
+    /**
+     * Construct method for inject container
+     *
+     * @param Container $container Container
+     */
+    public function __construct(Container $container) {
         parent::__construct($container);
-        $this->_mqtt = $container->get('mqtt');
+        $this->_mqtt    = $container->get('mqtt');
         $this->_service = $container->get(Service::class);
     }
 
-    public function prepare () {
+    /**
+     * Prepare worker
+     *
+     * @return void
+     */
+    public function prepare() {
         $topics = [
             Topic::DEVICE_REGISTRATION => [
                 'function' => function (string $topic, string $message) {
@@ -60,16 +74,31 @@ class Registration extends AWorker {
         $this->subscribe($topics);
     }
 
-    public function receive (string $topic, string $message) {
+    /**
+     * Receives message
+     *
+     * @param string $topic   Topic
+     * @param string $message Message
+     *
+     * @return void
+     */
+    protected function receive(string $topic, string $message) {
         $data = array_filter(JSON::decode($message));
 
-        $device = $this->_syncDB($data);
+        $device = $this->_syncDb($data);
         $this->_establishTimer($device);
         $this->_initDevice($device);
     }
 
-    private function _syncDB ($data): Device {
-        $query = EntityQuery::create(Device::class, [], ['mac' => $data['mac']]);
+    /**
+     * Makes synchronization with database
+     *
+     * @param array $data Array with mac and ip address
+     *
+     * @return Device
+     */
+    private function _syncDb($data): Device {
+        $query  = EntityQuery::create(Device::class, [], ['mac' => $data['mac']]);
         $device = $this->_service->findOne($query); /* @var $device Device */
 
         if (!$device) {
@@ -86,7 +115,14 @@ class Registration extends AWorker {
         return $device;
     }
 
-    private function _establishTimer (Device $device) {
+    /**
+     * Establishes keep alive timer
+     *
+     * @param Device $device Device
+     *
+     * @return void
+     */
+    private function _establishTimer(Device $device) {
         $timer = new Timer();
         $timer->setName('device_keep_alive_'.$device->getId());
         $timer->setTargetTopic(Topic::DEVICE_KEEP_ALIVE);
@@ -97,25 +133,34 @@ class Registration extends AWorker {
         $this->publish(Topic::TIMER_START, JSON::encode($timer));
     }
 
-    private function _initDevice (Device $device) {
+    /**
+     * Sends initialization of device
+     *
+     * @param Device $device Device
+     *
+     * @return void
+     */
+    private function _initDevice(Device $device) {
         foreach ($device->getModules()->toArray() as $module) { /* @var $module Module */
             $controls = $module->getControls();
-            $switch = $controls->filter(function(Control $element) {
-                        return $element->getType() === ControlType::SWITCH;
-                    })->first(); /* @var $switch Control */
+            $filterSw = function(Control $element) {
+                return $element->getType() === ControlType::SWITCH;
+            };
+            $switch = $controls->filter($filterSw)->first(); /* @var $switch Control */
 
             if ($switch) {
                 $control = clone $switch;
 
-                $resolution = $module->getSettingsData()['resolution'] ?? 8;
-                $controlData = $control->getControlData();
-                $controlData['value'] = $controlData['value'] ? (2 ^ $resolution - 1) : 0;
+                $resolution           = ($module->getSettingsData()['resolution'] ?? 8);
+                $controlData          = $control->getControlData();
+                $controlData['value'] = ($controlData['value']) ? (2 ^ $resolution - 1) : 0;
                 unset($controlData['delay']);
                 $control->setControlData($controlData);
 
-                $pwm = $controls->filter(function(Control $element) {
-                            return $element->getType() === ControlType::PWM;
-                        })->first(); /* @var $pwm Control */
+                $filterPwm = function(Control $element) {
+                    return $element->getType() === ControlType::PWM;
+                };
+                $pwm = $controls->filter($filterPwm)->first(); /* @var $pwm Control */
 
                 if ($pwm && $controlData['value']) {
                     $control->setControlData($pwm->getControlData());

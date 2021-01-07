@@ -16,53 +16,79 @@ use SmartHome\Database\EntityQuery;
 use SmartHome\Common\Service;
 
 /**
- * This file defines class for ...
+ * This file defines class for Firmware controller.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Controller {
 
     /**
+     * Common service instance
      *
      * @var Service
      */
     private $_commonService;
 
     /**
+     * MQTT client
      *
      * @var MQTT
      */
     private $_mqtt;
 
     /**
+     * Authorization instance
+     *
      * @var Authorize
      */
     private $_authorize;
 
     const DIR = __DIR__.'/../../../firmwares';
 
-    public function __construct (Container $container) {
+    /**
+     * Construct method for inject dependencies
+     *
+     * @param Container $container Container
+     */
+    public function __construct(Container $container) {
         $this->_commonService = $container->get(Service::class);
-        $this->_mqtt = $container->get('mqtt');
-        $this->_authorize = $container->get('authorize');
+        $this->_mqtt          = $container->get('mqtt');
+        $this->_authorize     = $container->get('authorize');
     }
 
-    public function firmwares (Request $request, Response $response) {
+    /**
+     * Gets list of firmwares
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function firmwares(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
 
-        $query = EntityQuery::create(Firmware::class);
+        $query     = EntityQuery::create(Firmware::class);
         $firmwares = $this->_commonService->find($query);
 
         $data = array_map(function(Firmware $firmware) {
-            return [
+            $data = [
                 'firmware' => $firmware,
             ];
+            return $data;
         }, $firmwares);
 
         return $response->withJson($data);
     }
 
-    public function create (Request $request, Response $response) {
+    /**
+     * Creates firmware
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function create(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
         $data = $request->getParsedBody();
 
@@ -79,11 +105,19 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK);
     }
 
-    public function update (Request $request, Response $response) {
+    /**
+     * Updates firmware
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function update(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
         $data = $request->getParsedBody();
 
-        $query = EntityQuery::create(Firmware::class, [], ['id' => $data['firmware']['id']]);
+        $query    = EntityQuery::create(Firmware::class, [], ['id' => $data['firmware']['id']]);
         $firmware = $this->_commonService->findOne($query); /* @var $firmware Firmware */
 
         if ($firmware) {
@@ -108,10 +142,19 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK);
     }
 
-    public function delete (Request $request, Response $response, array $params) {
+    /**
+     * Deletes firmware
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     * @param array    $params   Parameters (id)
+     *
+     * @return Response
+     */
+    public function delete(Request $request, Response $response, array $params) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
 
-        $query = EntityQuery::create(Firmware::class, [], ['id' => $params['id']]);
+        $query    = EntityQuery::create(Firmware::class, [], ['id' => $params['id']]);
         $firmware = $this->_commonService->findOne($query); /* @var $firmware Firmware */
 
         if ($firmware) {
@@ -125,7 +168,15 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK);
     }
 
-    public function upload (Request $request, Response $response) {
+    /**
+     * Uploads firmware binary
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function upload(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
 
         $tmpDir = self::DIR.'/tmp';
@@ -139,8 +190,15 @@ class Controller {
         return $response->withJson(['filename' => $file->getClientFilename()]);
     }
 
-    private function _saveFile (Firmware $firmware) {
-        $filename = $firmware->getFilename();
+    /**
+     * Saves binary file
+     *
+     * @param Firmware $firmware Firmware
+     *
+     * @return $this
+     */
+    private function _saveFile(Firmware $firmware) {
+        $filename  = $firmware->getFilename();
         $targetDir = $firmware->getDir();
         if (!file_exists($targetDir)) {
             mkdir($targetDir);

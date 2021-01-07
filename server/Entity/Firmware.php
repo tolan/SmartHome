@@ -8,90 +8,168 @@ use JsonSerializable;
 use SmartHome\Common\Abstracts\Entity;
 
 /**
+ * This file defines class for firmware entity.
+ *
  * @Entity @Table(name="firmwares")
- * */
+ */
 class Firmware extends Entity implements JsonSerializable {
 
     /**
-     * @Id @Column(type="integer") @GeneratedValue
+     * Id
      *
-     * @var int
+     * @var integer
+     *
+     * @Id @Column(type="integer") @GeneratedValue
      */
     protected $id;
 
     /**
-     * @Column(type="string")
+     * Name
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $name;
 
     /**
-     * @Column(type="string")
+     * Filename
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $filename;
 
     /**
+     * Devices
+     *
      * @var ArrayCollection|Device[]
      *
      * @OneToMany(targetEntity="Device", mappedBy="_firmware")
      */
     private $_devices;
 
-    public function __construct () {
+    /**
+     * Contruct method
+     */
+    public function __construct() {
         $this->_devices = new ArrayCollection();
     }
 
-    public function jsonSerialize () {
+    /**
+     * Returns serialized data from JSON serialize.
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
+            'id'       => $this->id,
+            'name'     => $this->name,
             'filename' => $this->filename,
         ];
     }
 
-    public function getId () {
+    /**
+     * Gets Id
+     *
+     * @return int
+     */
+    public function getId() {
         return $this->id;
     }
 
-    public function getName () {
+    /**
+     * Gets name
+     *
+     * @return string
+     */
+    public function getName() {
         return $this->name;
     }
 
-    public function setName ($name) {
+    /**
+     * Sets name
+     *
+     * @param string $name Name
+     *
+     * @return $this
+     */
+    public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
-    public function getFilename () {
+    /**
+     * Gets filename
+     *
+     * @return string
+     */
+    public function getFilename() {
         return $this->filename;
     }
 
-    public function setFilename ($filename) {
+    /**
+     * Sets filename
+     *
+     * @param string $filename Filename
+     *
+     * @return $this
+     */
+    public function setFilename($filename) {
         $this->filename = $filename;
+        return $this;
     }
 
-    public function getDevices () {
+    /**
+     * Gets devices
+     *
+     * @return ArrayCollection
+     */
+    public function getDevices() {
         return $this->_devices;
     }
 
-    public function getDir (): string {
+    /**
+     * Gets path dir to firmwares
+     *
+     * @return string
+     */
+    public function getDir(): string {
         $dir = __DIR__.'/../../firmwares';
         return $dir.'/'.$this->getId();
     }
 
-    public function getCollection (string $entityName): Selectable {
+    /**
+     * Gets collection by entity name
+     *
+     * @param string $entityName Entity name
+     *
+     * @return Selectable
+     *
+     * @throws Exception
+     */
+    public function getCollection(string $entityName): Selectable {
         $this->checkEntityName($entityName);
         switch ($entityName) {
             case Device::class:
                 return $this->_devices;
-            default :
+            default:
                 throw new Exception('Device doesn\'t have relation to '.$entityName);
         }
     }
 
-    public function setRelation (string $entityName, ?Entity $value): self {
+    /**
+     * Sets relation entity
+     *
+     * @param string      $entityName Entity name
+     * @param Entity|null $value      Entity
+     *
+     * @return self
+     *
+     * @throws Exception
+     */
+    public function setRelation(string $entityName, ?Entity $value): self {
         throw new Exception('Firmware doesn\'t have any "many to one" relation!');
     }
 

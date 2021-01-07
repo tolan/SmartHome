@@ -5,33 +5,57 @@ namespace SmartHome\Process;
 use Monolog\Logger;
 
 /**
- * This file defines class for ...
+ * This file defines class for collect tasks
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Container {
 
     /**
+     * Set of registered tasks
      *
      * @var Task[]
      */
     private $_tasks = [];
 
     /**
+     * Logger
      *
      * @var Logger
      */
     private $_logger;
 
-    public function __construct (Logger $logger) {
+    /**
+     * Construct method for inject depencies.
+     *
+     * @param Logger $logger Logger
+     */
+    public function __construct(Logger $logger) {
         $this->_logger = $logger;
     }
 
-    public function addTask (Task $task) {
+    /**
+     * Adds task
+     *
+     * @param Task $task Task
+     *
+     * @return Container
+     */
+    public function addTask(Task $task) {
         $this->_tasks[] = $task;
+
+        return $this;
     }
 
-    public function run ($loop = false, $timeout = 10000) {
+    /**
+     * Runs and manages assigned tasks
+     *
+     * @param bool $loop    Execute run in loop
+     * @param int  $timeout sleep in microsecond
+     *
+     * @return boolean
+     */
+    public function run(bool $loop = false, $timeout = 10000) {
         do {
             foreach ($this->_tasks as $task) {
                 if (!$task->getProcess()->isStarted()) {
@@ -39,32 +63,32 @@ class Container {
                     continue;
                 }
 
-                if (($error = $task->getProcess()->getIncrementalErrorOutput())) {
+                $error = $task->getProcess()->getIncrementalErrorOutput();
+                if ($error) {
                     $this->_logger->error('Process task has failed: '.$error);
                 }
 
                 if ($task->getProcess()->getExitCode()) {
-                    $this->_logger->error(
-                            'Process task has stopped: '.$task->getCommand().' with params: '.join(', ', $task->getParams()).'. '.
-                            'and exit code: '.$task->getProcess()->getExitCode()
-                    );
+                    $message = [
+                        'Process task has stopped: '.$task->getCommand().' with params: '.join(', ', $task->getParams()).'.',
+                        'and exit code: '.$task->getProcess()->getExitCode()
+                    ];
+                    $this->_logger->error(join(' ', $message));
                 }
 
                 try {
-                    $task->checkStartTimeout()
-                            ->checkActiveTimeout()
-                            ->checkInactiveTimeout()
-                            ->checkKeepAliveTimeout();
+                    $task->checkStartTimeout()->checkActiveTimeout()->checkInactiveTimeout()->checkKeepAliveTimeout();
                 } catch (Exception $ex) {
-                    $this->_logger->warning(
-                            'Restart of task: '.$task->getCommand().' with params: '.join(', ', $task->getParams()).'. '.
-                            'It is for '.$task->getStarts().' times. '.
-                            'Reason: '.$ex->getMessage().'. '.
-                            'Task output: '.$task->getProcess()->getOutput().' '.
-                            'Task error output: '.$task->getProcess()->getErrorOutput().' '.
-                            'Task exit code text: '.$task->getProcess()->getExitCodeText().' '
-                            , [$ex]
-                    );
+                    $message = [
+                        'Restart of task: '.$task->getCommand().' with params: '.join(', ', $task->getParams()).'.',
+                        'It is for '.$task->getStarts().' times.',
+                        'Reason: '.$ex->getMessage().'.',
+                        'Task output: '.$task->getProcess()->getOutput(),
+                        'Task error output: '.$task->getProcess()->getErrorOutput(),
+                        'Task exit code text: '.$task->getProcess()->getExitCodeText(),
+                    ];
+
+                    $this->_logger->warning(join(' ', $message), [$ex]);
                     $task->stop()->start();
                 }
             }
@@ -77,7 +101,12 @@ class Container {
         return true;
     }
 
-    public function stopAll () {
+    /**
+     * Stops all tasks
+     *
+     * @return Container
+     */
+    public function stopAll() {
         foreach ($this->_tasks as $task) {
             $task->stop();
         }

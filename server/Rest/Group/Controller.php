@@ -19,46 +19,71 @@ use SmartHome\Database\EntityQuery;
 use SmartHome\Common\Service;
 
 /**
- * This file defines class for ...
+ * This file defines class for Group controller.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Controller {
 
     /**
+     * Common service
      *
      * @var Service
      */
     private $_commonService;
 
     /**
+     * Authorization instance
+     *
      * @var Authorize
      */
     private $_authorize;
 
-    public function __construct (Container $container) {
+    /**
+     * Construct method for inject dependencies
+     *
+     * @param Container $container Container
+     */
+    public function __construct(Container $container) {
         $this->_commonService = $container->get(Service::class);
-        $this->_authorize = $container->get('authorize');
+        $this->_authorize     = $container->get('authorize');
     }
 
-    public function groups (Request $request, Response $response) {
+    /**
+     * Gets list of groups
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function groups(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
 
-        $query = EntityQuery::create(Group::class, [[PermissionEntity::class], [Room::class]]);
+        $query  = EntityQuery::create(Group::class, [[PermissionEntity::class], [Room::class]]);
         $groups = $this->_commonService->find($query);
 
         $data = array_map(function(Group $group) {
-            return [
-                'group' => $group,
+            $data = [
+                'group'       => $group,
                 'permissions' => $group->getPermissions()->toArray(),
-                'rooms' => $group->getRooms()->toArray(),
+                'rooms'       => $group->getRooms()->toArray(),
             ];
+            return $data;
         }, $groups);
 
         return $response->withJson($data);
     }
 
-    public function create (Request $request, Response $response) {
+    /**
+     * Creates group
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function create(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
         $data = $request->getParsedBody();
 
@@ -77,7 +102,15 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK);
     }
 
-    public function update (Request $request, Response $response) {
+    /**
+     * Updates group
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function update(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
         $data = $request->getParsedBody();
 
@@ -101,7 +134,16 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK);
     }
 
-    public function delete (Request $request, Response $response, array $params) {
+    /**
+     * Deletes group
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     * @param array    $params   Parameters (id)
+     *
+     * @return Response
+     */
+    public function delete(Request $request, Response $response, array $params) {
         $this->_authorize->checkPermissions($request, [Permission::TYPE_SECTION_ADMIN]);
 
         $query = EntityQuery::create(Group::class, [], ['id' => $params['id']]);

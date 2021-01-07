@@ -8,91 +8,164 @@ use SmartHome\Common\Exception;
 use Doctrine\Common\Collections\Selectable;
 
 /**
+ * This file defines class for control entity.
+ *
  * @Entity @Table(name="controls")
  * */
 class Control extends Entity implements JsonSerializable {
 
     /**
-     * @Id @Column(type="integer") @GeneratedValue
+     * Id
      *
-     * @var int
+     * @var integer
+     *
+     * @Id @Column(type="integer") @GeneratedValue
      */
     protected $id;
 
     /**
-     * @Column(type="string")
+     * Type
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $type;
 
     /**
+     * Control data
+     *
+     * @var array
      *
      * @Column(type="array")
-     *
-     * @var string
      */
     protected $controlData;
 
     /**
+     * Module
      *
      * @var Module
      *
      * @ManyToOne(targetEntity="Module", inversedBy="_controls")
-     * @JoinColumn(name="module_id", referencedColumnName="id")
+     * @JoinColumn(name="module_id",     referencedColumnName="id")
      */
     private $_module;
 
-    public function jsonSerialize () {
+    /**
+     * Returns serialized data from JSON serialize.
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
         return [
-            'id' => $this->id,
-            'type' => $this->type,
+            'id'          => $this->id,
+            'type'        => $this->type,
             'controlData' => $this->controlData,
         ];
     }
 
-    public function getId () {
+    /**
+     * Gets Id
+     *
+     * @return int
+     */
+    public function getId() {
         return $this->id;
     }
 
-    public function getType () {
+    /**
+     * Gets type
+     *
+     * @return string
+     */
+    public function getType() {
         return $this->type;
     }
 
-    public function setType ($type) {
+    /**
+     * Sets type
+     *
+     * @param string $type Type
+     *
+     * @return $this
+     */
+    public function setType($type) {
         $this->type = $type;
         return $this;
     }
 
-    public function getControlData () {
+    /**
+     * Gets control data
+     *
+     * @return array
+     */
+    public function getControlData() {
         return $this->controlData;
     }
 
-    public function setControlData ($data) {
+    /**
+     * Sets control data
+     *
+     * @param array $data Data
+     *
+     * @return $this
+     */
+    public function setControlData($data) {
         $this->controlData = $data;
         return $this;
     }
 
-    public function getModule () {
+    /**
+     * Gets module
+     *
+     * @return Module
+     */
+    public function getModule() {
         return $this->_module;
     }
 
-    public function setModule ($module) {
+    /**
+     * Sets module
+     *
+     * @param Module $module Module
+     *
+     * @return $this
+     */
+    public function setModule($module) {
         $this->_module = $module;
         return $this;
     }
 
-    public function getCollection (string $entityName): Selectable {
+    /**
+     * Gets collection by entity name
+     *
+     * @param string $entityName Entity name
+     *
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function getCollection(string $entityName): Selectable {
         throw new Exception('Control doesn\'t have any "many to many" relation!');
     }
 
-    public function setRelation (string $entityName, ?Entity $value): self {
+    /**
+     * Sets relation entity
+     *
+     * @param string      $entityName Entity name
+     * @param Entity|null $value      Entity
+     *
+     * @return self
+     *
+     * @throws Exception
+     */
+    public function setRelation(string $entityName, ?Entity $value): self {
         $this->checkEntityName($entityName);
         switch ($entityName) {
             case Module::class:
                 $this->_module = $value;
                 break;
-            default :
+            default:
                 throw new Exception('Control doesn\'t have relation to '.$entityName);
         }
 

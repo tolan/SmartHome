@@ -8,13 +8,21 @@ use SmartHome\Enum\Topic;
 use SmartHome\Entity\Device;
 
 /**
- * This file defines class for ...
+ * This file defines class for firmware device helper
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Firmware {
 
-    public static function sentFirmwareUpdate (Device $device, MQTT $mqtt) {
+    /**
+     * Sends firmware update
+     *
+     * @param Device $device Device
+     * @param MQTT   $mqtt   MQTT client
+     *
+     * @return void
+     */
+    public static function sendFirmwareUpdate(Device $device, MQTT $mqtt) {
         $data = [
             'device' => $device,
         ];

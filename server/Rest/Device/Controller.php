@@ -40,77 +40,95 @@ use SmartHome\Service\Device as DeviceService;
 use SmartHome\Service\User as UserService;
 
 /**
- * This file defines class for ...
+ * This file defines class for Device controller
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Controller {
 
     /**
+     * Common service
      *
      * @var Service
      */
     private $_commonService;
 
     /**
+     * Device service
      *
      * @var DeviceService
      */
     private $_deviceService;
 
     /**
+     * User service
      *
      * @var UserService
      */
     private $_userService;
 
     /**
+     * MQTT client
      *
      * @var MQTT
      */
     private $_mqtt;
 
     /**
+     * Authorization instance
+     *
      * @var Authorize
      */
     private $_authorize;
 
-    public function __construct (Container $container) {
-        $this->_mqtt = $container->get('mqtt');
-        $this->_authorize = $container->get('authorize');
+    /**
+     * Construct method for inject dependencies
+     *
+     * @param Container $container Container
+     */
+    public function __construct(Container $container) {
+        $this->_mqtt          = $container->get('mqtt');
+        $this->_authorize     = $container->get('authorize');
         $this->_commonService = $container->get(Service::class);
         $this->_deviceService = $container->get(DeviceService::class);
-        $this->_userService = $container->get(UserService::class);
+        $this->_userService   = $container->get(UserService::class);
     }
 
-    public function list (Request $request, Response $response) {
+    /**
+     * Gets list of devices
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function list(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_SECTION_DEVICES]);
 
-//        $query = EntityQuery::create(Device::class, [[Module::class, Control::class], [Firmware::class], [Room::class]]);
-//        $devices = $this->_commonService->find($query);
-//
-//        $data = [];
-//        foreach ($devices as $device) {
-//            $data[] = $this->_transformDevice($device);
-//        }
-
         $data = $this->_deviceService->getDevices();
+
         return $response->withJson($data);
     }
 
-    public function update (Request $request, Response $response) {
+    /**
+     * Updates device
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function update(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_SECTION_ADMIN]);
         $data = $request->getParsedBody();
         if (!$data['device'] || !$data['device']['id'] || !$data['firmware'] || !$data['firmware']['id']) {
             $response = $response->withStatus(HttpStatusCode::BAD_REQUEST);
         }
 
-        $device = $this->_commonService->findOne(
-                EntityQuery::create(Device::class, [[Firmware::class], [Room::class]], ['id' => $data['device']['id']])
-        ); /* @var $device Device */
-        $firmware = $this->_commonService->findOne(
-                EntityQuery::create(Firmware::class, [], ['id' => $data['firmware']['id']])
-        ); /* @var $firmware Firmware */
+        $devceQuery    = EntityQuery::create(Device::class, [[Firmware::class], [Room::class]], ['id' => $data['device']['id']]);
+        $device        = $this->_commonService->findOne($devceQuery); /* @var $device Device */
+        $firmwareQuery = EntityQuery::create(Firmware::class, [], ['id' => $data['firmware']['id']]);
+        $firmware      = $this->_commonService->findOne($firmwareQuery); /* @var $firmware Firmware */
 
         if ($device && $firmware) {
             $originFirmare = $device->getFirmware();
@@ -136,9 +154,8 @@ class Controller {
             }
 
             if ($data['room']) {
-                $room = $this->_commonService->findOne(
-                        EntityQuery::create(Room::class, [], ['id' => $data['room']['id']])
-                ); /* @var $room Room */
+                $roomQuery = EntityQuery::create(Room::class, [], ['id' => $data['room']['id']]);
+                $room      = $this->_commonService->findOne($roomQuery); /* @var $room Room */
 
                 $device->setRoom($room);
                 $room->getDevices()->add($device);
@@ -150,36 +167,36 @@ class Controller {
                 $device->getModules()->clear();
                 foreach ($data['modules'] as $moduleData) {
                     if ($moduleData['module']['id']) {
-                        $module = $this->_commonService->findOne(
-                                EntityQuery::create(Module::class, [[Control::class]], ['id' => $moduleData['module']['id']])
-                        ); /* @var $room Room */
-                        $module->setName($moduleData['module']['name'])
-                                ->setSettingsData($moduleData['module']['settingsData']);
+                        $moduleQuery = EntityQuery::create(Module::class, [[Control::class]], ['id' => $moduleData['module']['id']]);
+                        $module      = $this->_commonService->findOne($moduleQuery); /* @var $room Room */
+                        $module->setName($moduleData['module']['name'])->setSettingsData($moduleData['module']['settingsData']);
                         foreach ($module->getControls()->toArray() as $control) {
                             $this->_commonService->remove($control);
                         }
+
                         $module->getControls()->clear();
                         $this->_commonService->persist($module);
                     } else {
-                        $module = (new Module())
-                                ->setName($moduleData['module']['name'])
-                                ->setSettingsData($moduleData['module']['settingsData'])
-                                ->setDevice($device);
+                        $module = new Module();
+                        $module->setName($moduleData['module']['name']);
+                        $module->setSettingsData($moduleData['module']['settingsData']);
+                        $module->setDevice($device);
                         $this->_commonService->persist($module);
                     }
+
                     $device->getModules()->add($module);
 
                     if (!empty($moduleData['controls'])) {
                         foreach ($moduleData['controls'] as $controlData) {
-                            $control = (new Control())
-                                    ->setType($controlData['control']['type'])
-                                    ->setModule($module)
-                                    ->setControlData($controlData['control']['controlData']);
+                            $control = new Control();
+                            $control->setType($controlData['control']['type']);
+                            $control->setModule($module);
+                            $control->setControlData($controlData['control']['controlData']);
                             $module->getControls()->add($control);
                             $this->_commonService->persist($control);
                             if ($control->getType() === ControlType::MQTT) {
                                 $controlsToUpdate[] = [
-                                    'module' => $module,
+                                    'module'  => $module,
                                     'control' => $control,
                                 ];
                             }
@@ -198,7 +215,7 @@ class Controller {
             }
 
             if ($uploadFirmware) {
-                FirmwareUpdate::sentFirmwareUpdate($device, $this->_mqtt);
+                FirmwareUpdate::sendFirmwareUpdate($device, $this->_mqtt);
             }
 
             $response = $response->withStatus(HttpStatusCode::OK);
@@ -209,10 +226,18 @@ class Controller {
         return $response;
     }
 
-    public function delete (Request $request, Response $response) {
+    /**
+     * Deletes device
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function delete(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_SECTION_ADMIN]);
 
-        $query = EntityQuery::create(Device::class, [[Module::class, Control::class]], ['id' => $request->getParsedBodyParam('id')]);
+        $query  = EntityQuery::create(Device::class, [[Module::class, Control::class]], ['id' => $request->getParsedBodyParam('id')]);
         $device = $this->_commonService->findOne($query); /* @var $device Device */
         if ($device) {
             foreach ($device->getModules()->toArray() as $module) { /* @var $module Module */
@@ -235,38 +260,33 @@ class Controller {
         return $response;
     }
 
-    public function controlled (Request $request, Response $response) {
+    /**
+     * Gets list of controlled devices
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function controlled(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_SECTION_DEVICES]);
         $data = [];
-        if (($user = $this->_userService->getCurrentUser())) {
-            $userQuery = (new EntityQuery(User::class))
-                            ->with(
-                                    (new RelationQuery(Group::class))
-                                    ->with(
-                                            (new RelationQuery(Permission::class))->conditions(['type' => PermissionType::TYPE_DEVICE_CONTROL])
-                                    )
-                            )->conditions(['id' => $user['user']->getId()])
-            ;
-            $user = $this->_commonService->findOne($userQuery); /* @var $user User */
+        $user = $this->_userService->getCurrentUser();
+        if ($user) {
+            $permissionQuery = (new RelationQuery(Permission::class))->conditions(['type' => PermissionType::TYPE_DEVICE_CONTROL]);
+            $groupQuery      = (new RelationQuery(Group::class))->with($permissionQuery);
+            $userQuery       = (new EntityQuery(User::class))->with($groupQuery)->conditions(['id' => $user['user']->getId()]);
+            $user            = $this->_commonService->findOne($userQuery); /* @var $user User */
 
-            $groupsIds = $user->getGroups()->map(function (Group $group) {
-                        return $group->getId();
-                    })->toArray();
+            $map = function (Group $group) {
+                return $group->getId();
+            };
+            $groupsIds = $user->getGroups()->map($map)->toArray();
 
-
-            $deviceQuery = (new EntityQuery(Device::class))
-                            ->with(
-                                    (new RelationQuery(Room::class))
-                                    ->with(
-                                            (new RelationQuery(Group::class))->conditions(['id' => $groupsIds])
-                                    )
-                            )->with(
-                            (new RelationQuery(Module::class))
-                                    ->with(
-                                            new RelationQuery(Control::class)
-                                    )
-                    )->with(new RelationQuery(Firmware::class))
-            ;
+            $groupQuery  = (new RelationQuery(Group::class))->conditions(['id' => $groupsIds]);
+            $roomQuery   = (new RelationQuery(Room::class))->with($groupQuery);
+            $moduleQuery = (new RelationQuery(Module::class))->with(new RelationQuery(Control::class));
+            $deviceQuery = (new EntityQuery(Device::class))->with($roomQuery)->with($moduleQuery)->with(new RelationQuery(Firmware::class));
 
             $devices = $this->_commonService->find($deviceQuery);
 
@@ -278,11 +298,19 @@ class Controller {
         return $response->withJson($data);
     }
 
-    public function modules (Request $request, Response $response) {
+    /**
+     * Gets current state of modules
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function modules(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_SECTION_DEVICES]);
 
         $modulesIds = array_column($request->getParsedBodyParam('modules'), 'id');
-        $modules = $this->_deviceService->getModules($modulesIds);
+        $modules    = $this->_deviceService->getModules($modulesIds);
 
         $data = array_map(function (Module $module) {
             return $this->_transformModule($module);
@@ -291,15 +319,22 @@ class Controller {
         return $response->withJson($data);
     }
 
-    public function control (Request $request, Response $response) {
+    /**
+     * Controls device
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function control(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_DEVICE_CONTROL]);
 
-        $device = $this->_commonService->findOne(EntityQuery::create(Device::class, [], ['id' => $request->getParsedBodyParam('device')['id']])); /* @var $device Device */
-        $module = $this->_commonService->findOne(EntityQuery::create(Module::class, [], ['id' => $request->getParsedBodyParam('module')['id']])); /* @var $module Module */
+        $device  = $this->_commonService->findOne(EntityQuery::create(Device::class, [], ['id' => $request->getParsedBodyParam('device')['id']])); /* @var $device Device */
+        $module  = $this->_commonService->findOne(EntityQuery::create(Module::class, [], ['id' => $request->getParsedBodyParam('module')['id']])); /* @var $module Module */
         $control = $this->_commonService->findOne(EntityQuery::create(Control::class, [], ['id' => $request->getParsedBodyParam('control')['id']])); /* @var $control Control */
 
         $controlData = $request->getParsedBodyParam('control')['controlData'];
-
 
         if ($device && $module && $control && $controlData) {
             $control->setControlData($controlData);
@@ -316,10 +351,18 @@ class Controller {
         return $response;
     }
 
-    public function restart (Request $request, Response $response) {
+    /**
+     * Restarts device
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function restart(Request $request, Response $response) {
         $deviceId = $request->getAttribute('id');
 
-        $query = EntityQuery::create(Device::class, [], ['id' => $deviceId]);
+        $query  = EntityQuery::create(Device::class, [], ['id' => $deviceId]);
         $device = $this->_commonService->findOne($query); /* @var $device Device */
 
         if ($device) {
@@ -332,7 +375,15 @@ class Controller {
         return $response;
     }
 
-    public function register (Request $request, Response $response) {
+    /**
+     * Registration of device
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return Response
+     */
+    public function register(Request $request, Response $response) {
         $device = new Device();
         $device->setMac($request->getParsedBodyParam('mac'));
         $device->setIpAddress($request->getServerParam('REMOTE_ADDR'));
@@ -342,7 +393,16 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK);
     }
 
-    public function remoteControl (Request $request, Response $response, array $params) {
+    /**
+     * Remote controls
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     * @param array    $params   Parameters (id, action, value)
+     *
+     * @return Response
+     */
+    public function remoteControl(Request $request, Response $response, array $params) {
         $this->_authorize->checkApiToken($request);
         ['id' => $moduleId, 'action' => $action, 'value' => $value] = $params;
 
@@ -360,27 +420,41 @@ class Controller {
         return $response->withStatus(HttpStatusCode::OK)->withJson('OK');
     }
 
-    private function _transformDevice (Device $device) {
+    /**
+     * Transforms device to output
+     *
+     * @param Device $device Device
+     *
+     * @return array
+     */
+    private function _transformDevice(Device $device) {
         $modules = [];
         foreach ($device->getModules()->toArray() as $module) {
             $modules[] = $this->_transformModule($module);
         }
 
         return [
-            'device' => $device,
+            'device'   => $device,
             'firmware' => $device->getFirmware(),
-            'room' => $device->getRoom(),
-            'modules' => $modules,
+            'room'     => $device->getRoom(),
+            'modules'  => $modules,
         ];
     }
 
-    private function _transformModule (Module $module) {
+    /**
+     * Transforms module
+     *
+     * @param Module $module Module
+     *
+     * @return array
+     */
+    private function _transformModule(Module $module) {
         $controls = array_map(function(Control $control) {
             return ['control' => $control];
         }, $module->getControls()->toArray());
 
         return [
-            'module' => $module,
+            'module'   => $module,
             'controls' => $controls,
         ];
     }

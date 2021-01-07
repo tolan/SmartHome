@@ -10,7 +10,6 @@ use Slim\Factory\AppFactory;
 use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ContentLengthMiddleware;
 use Slim\Middleware\Session;
-use Slim\Views\Twig;
 use Bluerhinos\phpMQTT;
 use Predis\Client as RedisClient;
 use SmartHome\Common\MQTT;
@@ -100,10 +99,6 @@ $container->set('db', function(Container $container) {
     }
 
     return $em;
-});
-
-$container->set('view', function() {
-    return Twig::create(__DIR__.'/public');
 });
 
 $id = $argv ? $argv[1].'-' : null;

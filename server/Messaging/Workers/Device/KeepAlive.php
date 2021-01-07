@@ -9,9 +9,10 @@ use SmartHome\Common\Utils\JSON;
 use SmartHome\Entity\Timer;
 use Exception;
 use Monolog\Logger;
+use DI\Container;
 
 /**
- * This file defines class for ...
+ * This file defines class for kepp alive worker
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
@@ -20,24 +21,35 @@ class KeepAlive extends AWorker {
     const MAX_ATTEMPTS = 3;
 
     /**
+     * Logger
+     *
      * @var Logger
      */
     private $_logger;
 
     /**
+     * List of address and attempts
+     *
      * @var array
      */
     private $_attempts = [];
 
     /**
-     * @Inject({"container", "logger"})
+     * Contstruct method for inject dependecies.
+     *
+     * @param Container $container Container
      */
-    public function __construct ($container, $logger) {
+    public function __construct(Container $container) {
         parent::__construct($container);
-        $this->_logger = $logger;
+        $this->_logger = $container->get('logger');
     }
 
-    public function prepare () {
+    /**
+     * Prepare worker
+     *
+     * @return void
+     */
+    public function prepare() {
         $topics = [
             Topic::DEVICE_KEEP_ALIVE => [
                 'function' => function (string $topic, string $message) {
@@ -48,9 +60,17 @@ class KeepAlive extends AWorker {
         $this->subscribe($topics);
     }
 
-    public function receive (string $topic, string $message) {
-        $data = JSON::decode($message);
-        $client = new Client();
+    /**
+     * Receive message
+     *
+     * @param string $topic   Topic
+     * @param string $message Message
+     *
+     * @return void
+     */
+    protected function receive(string $topic, string $message) {
+        $data    = JSON::decode($message);
+        $client  = new Client();
         $address = 'http://'.$data['ipAddress'].'/keep-alive';
 
         if (!array_key_exists($address, $this->_attempts)) {

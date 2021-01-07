@@ -9,71 +9,94 @@ use SmartHome\Common\Abstracts\Entity;
 use Doctrine\Common\Collections\Selectable;
 
 /**
+ * This file defines class for timer entity.
+ *
  * @Entity @Table(name="timers")
  */
 class Timer extends Entity implements JsonSerializable {
 
     /**
-     * @Id @Column(type="integer") @GeneratedValue
+     * Id
      *
-     * @var int
+     * @var integer
+     *
+     * @Id @Column(type="integer") @GeneratedValue
      */
     protected $id;
 
     /**
-     * @Column(type="string")
+     * Name
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $name;
 
     /**
-     * @Column(type="string")
+     * Topic
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $topic;
 
     /**
-     * @Column(type="json")
+     * Content
      *
      * @var string
+     *
+     * @Column(type="json")
      */
     protected $content;
 
     /**
-     * @Column{type="datetime"}
+     * Created
      *
      * @var DateTime
+     *
+     * @Column{type="datetime"}
      */
     protected $created;
 
     /**
-     * @Column{type="string", nullable=true}
+     * Last run
      *
      * @var string
+     *
+     * @Column{type="string", nullable=true}
      */
     protected $lastRun = '';
 
     /**
-     * @Column(type="string")
+     * Timeout
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $timeout;
 
     /**
-     * @Column(type="boolean")
+     * Repeated
      *
-     * @var bool
+     * @var boolean
+     *
+     * @Column(type="boolean")
      */
     protected $repated = false;
 
-    public function __construct (array $data = null) {
+    /**
+     * Contruct method
+     *
+     * @param array $data Init data
+     */
+    public function __construct(array $data = null) {
         $this->created = new DateTime();
         if ($data) {
-            $this->name = $data['name'];
-            $this->topic = $data['topic'];
+            $this->name    = $data['name'];
+            $this->topic   = $data['topic'];
             $this->content = $data['content'];
             $this->created = new DateTime($data['created']);
             $this->timeout = $data['timeout'];
@@ -81,90 +104,222 @@ class Timer extends Entity implements JsonSerializable {
         }
     }
 
-    public function jsonSerialize () {
+    /**
+     * Returns serialized data from JSON serialize.
+     *
+     * @return array
+     *
+     * @throws Exception Throws when name is not set
+     */
+    public function jsonSerialize() {
         if (!$this->name) {
             throw new Exception('Name must be set!');
         }
 
         return [
-            'name' => $this->name,
-            'topic' => $this->topic,
-            'content' => $this->content,
-            'created' => strval($this->created),
-            'timeout' => $this->timeout,
+            'name'     => $this->name,
+            'topic'    => $this->topic,
+            'content'  => $this->content,
+            'created'  => strval($this->created),
+            'timeout'  => $this->timeout,
             'repeated' => $this->repated,
         ];
     }
 
-    public function getId (): ?string {
+    /**
+     * Gets Id
+     *
+     * @return int
+     */
+    public function getId(): ?string {
         return $this->id;
     }
 
-    public function setId (string $id) {
+    /**
+     * Sets Id
+     *
+     * @param string $id ID
+     *
+     * @return $this
+     */
+    public function setId(string $id) {
         $this->id = $id;
+
+        return $this;
     }
 
-    public function getName (): string {
+    /**
+     * Gets name
+     *
+     * @return string
+     */
+    public function getName(): string {
         return $this->name;
     }
 
-    public function setName (string $name) {
+    /**
+     * Sets name
+     *
+     * @param string $name Name
+     *
+     * @return $this
+     */
+    public function setName(string $name) {
         $this->name = $name;
+        return $this;
     }
 
-    public function getTargetTopic (): string {
+    /**
+     * Gets target topic
+     *
+     * @return string
+     */
+    public function getTargetTopic(): string {
         return $this->topic;
     }
 
-    public function setTargetTopic (string $topic) {
+    /**
+     * Sets target topic
+     *
+     * @param string $topic Topic
+     *
+     * @return $this
+     */
+    public function setTargetTopic(string $topic) {
         $this->topic = $topic;
+        return $this;
     }
 
-    public function getContent () {
+    /**
+     * Gets content
+     *
+     * @return array
+     */
+    public function getContent() {
         return $this->content;
     }
 
-    public function setContent ($data) {
+    /**
+     * Sets content
+     *
+     * @param array $data Data
+     *
+     * @return $this
+     */
+    public function setContent($data) {
         $this->content = $data;
+
+        return $this;
     }
 
-    public function getCreated () {
+    /**
+     * Gets created
+     *
+     * @return DateTime
+     */
+    public function getCreated() {
         return $this->created;
     }
 
-    public function setCreated (DateTime $dateTime) {
+    /**
+     * Sets created
+     *
+     * @param DateTime $dateTime Date time
+     *
+     * @return $this
+     */
+    public function setCreated(DateTime $dateTime) {
         $this->created = $dateTime;
+        return $this;
     }
 
-    public function getLastRun () {
-        return $this->lastRun !== '' ? new DateTime($this->lastRun) : null;
+    /**
+     * Gets last run
+     *
+     * @return DateTime|null
+     */
+    public function getLastRun() {
+        return ($this->lastRun !== '') ? new DateTime($this->lastRun) : null;
     }
 
-    public function setLastRun (DateTime $dateTime = null) {
+    /**
+     * Sets last run
+     *
+     * @param DateTime $dateTime Date time
+     *
+     * @return $this
+     */
+    public function setLastRun(DateTime $dateTime = null) {
         $this->lastRun = $dateTime;
+        return $this;
     }
 
-    public function getTimeout () {
+    /**
+     * Gets timeout
+     *
+     * @return string
+     */
+    public function getTimeout() {
         return $this->timeout;
     }
 
-    public function setTimeout (string $timeout) {
+    /**
+     * Sets timeout
+     *
+     * @param string $timeout Timeout
+     *
+     * @return $this
+     */
+    public function setTimeout(string $timeout) {
         $this->timeout = $timeout;
+        return $this;
     }
 
-    public function isRepeated (): bool {
+    /**
+     * Gets is repeated
+     *
+     * @return bool
+     */
+    public function isRepeated(): bool {
         return $this->repated;
     }
 
-    public function setRepeated (bool $repeated = true) {
+    /**
+     * Sets is repeated
+     *
+     * @param bool $repeated Repeated
+     *
+     * @return $this
+     */
+    public function setRepeated(bool $repeated = true) {
         $this->repated = $repeated;
+        return $this;
     }
 
-    public function getCollection (string $entityName): Selectable {
+    /**
+     * Gets collection by entity name
+     *
+     * @param string $entityName Entity name
+     *
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function getCollection(string $entityName): Selectable {
         throw new Exception('Timer doesn\'t have any many to many relation!');
     }
 
-    public function setRelation (string $entityName, ?Entity $value): self {
+    /**
+     * Sets relation entity
+     *
+     * @param string      $entityName Entity name
+     * @param Entity|null $value      Entity
+     *
+     * @return self
+     *
+     * @throws Exception
+     */
+    public function setRelation(string $entityName, ?Entity $value): self {
         throw new Exception('Timer doesn\'t have any "many to one" relation!');
     }
 

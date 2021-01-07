@@ -6,50 +6,102 @@ use Psr\SimpleCache\CacheInterface;
 use SmartHome\Cache\Adapter\IAdapter;
 
 /**
- * This file defines class for ...
+ * This file defines class for cache storage
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Storage implements CacheInterface {
 
     /**
+     * Scope
      *
      * @var string
      */
     private $_scope;
 
     /**
+     * Cache adapter
      *
-     * @var IAdapter;
+     * @var IAdapter
      */
     private $_adapter;
 
-    public function __construct (string $scope, IAdapter $adapter) {
-        $this->_scope = $scope;
+    /**
+     * Construct method for inject dependencies
+     *
+     * @param string   $scope   Scope
+     * @param IAdapter $adapter Cache adapter
+     */
+    public function __construct(string $scope, IAdapter $adapter) {
+        $this->_scope   = $scope;
         $this->_adapter = $adapter;
     }
 
-    public function has ($key): bool {
+    /**
+     * Returns that the key exists
+     *
+     * @param string $key Key
+     *
+     * @return bool
+     */
+    public function has($key): bool {
         return $this->_adapter->has($this->_getKey($key));
     }
 
-    public function get ($key, $default = null) {
+    /**
+     * Gets value by key
+     *
+     * @param string $key     Key
+     * @param mixed  $default Default value
+     *
+     * @return mixed
+     */
+    public function get($key, $default = null) {
         return $this->_adapter->get($this->_getKey($key), $default);
     }
 
-    public function set ($key, $value, $ttl = null): bool {
+    /**
+     * Sets value by key
+     *
+     * @param string $key   Key
+     * @param mixed  $value Value
+     * @param int    $ttl   TTL
+     *
+     * @return bool
+     */
+    public function set($key, $value, $ttl = null): bool {
         return $this->_adapter->set($this->_getKey($key), $value, $ttl);
     }
 
-    public function delete ($key): bool {
+    /**
+     * Deletes value by key
+     *
+     * @param string $key Key
+     *
+     * @return bool
+     */
+    public function delete($key): bool {
         return $this->_adapter->delete($this->_getKey($key));
     }
 
-    public function clear (): bool {
+    /**
+     * Removes all values
+     *
+     * @return bool
+     */
+    public function clear(): bool {
         return $this->_adapter->clear();
     }
 
-    public function getMultiple ($keys, $default = null): iterable {
+    /**
+     * Returns multiples keys
+     *
+     * @param array $keys    Set of keys
+     * @param mixed $default Default value
+     *
+     * @return iterable
+     */
+    public function getMultiple($keys, $default = null): iterable {
         $map = [];
         foreach ($keys as $key) {
             $map[$this->_getKey($key)] = $key;
@@ -65,7 +117,15 @@ class Storage implements CacheInterface {
         return $result;
     }
 
-    public function setMultiple ($values, $ttl = null): bool {
+    /**
+     * Sets multiple values
+     *
+     * @param array $values Array with [key => value]
+     * @param int   $ttl    TTL
+     *
+     * @return bool
+     */
+    public function setMultiple($values, $ttl = null): bool {
         $map = [];
         foreach ($values as $key => $value) {
             $map[$this->_getKey($key)] = $value;
@@ -74,7 +134,14 @@ class Storage implements CacheInterface {
         return $this->_adapter->setMultiple($map, $ttl);
     }
 
-    public function deleteMultiple ($keys): bool {
+    /**
+     * Deletes multiple keys
+     *
+     * @param array $keys Keys
+     *
+     * @return bool
+     */
+    public function deleteMultiple($keys): bool {
         $map = [];
         foreach ($keys as $key) {
             $map[] = $this->_getKey($key);
@@ -83,7 +150,14 @@ class Storage implements CacheInterface {
         return $this->_adapter->deleteMultiple($keys);
     }
 
-    private function _getKey ($key) {
+    /**
+     * Gets key by scope
+     *
+     * @param string $key Key
+     *
+     * @return string
+     */
+    private function _getKey($key) {
         return $this->_scope.'.'.$key;
     }
 

@@ -8,44 +8,58 @@ use JsonSerializable;
 use SmartHome\Common\Abstracts\Entity;
 
 /**
+ * This file defines class for user entity.
+ *
  * @Entity @Table(name="users")
- * */
+ */
 class User extends Entity implements JsonSerializable {
 
     /**
-     * @Id @Column(type="integer") @GeneratedValue
+     * Id
      *
-     * @var int
+     * @var integer
+     *
+     * @Id @Column(type="integer") @GeneratedValue
      */
     protected $id;
 
     /**
-     * @Column(type="string")
+     * Username
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $username;
 
     /**
-     * @Column(type="string")
+     * Password
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $password;
 
     /**
+     * Token
+     *
      * @var string
      */
     protected $token;
 
     /**
-     * @Column(type="string")
+     * API token
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $apiToken;
 
     /**
+     * Groups
+     *
      * @var ArrayCollection|Group[]
      *
      * @ManyToMany(targetEntity="Group", inversedBy="_users")
@@ -53,70 +67,159 @@ class User extends Entity implements JsonSerializable {
      */
     private $_groups;
 
-    public function __construct () {
+    /**
+     * Contruct method
+     */
+    public function __construct() {
         $this->_groups = new ArrayCollection();
     }
 
-    public function jsonSerialize () {
+    /**
+     * Returns serialized data from JSON serialize.
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
         return [
-            'id' => $this->id,
+            'id'       => $this->id,
             'username' => $this->username,
-            'token' => $this->token,
+            'token'    => $this->token,
             'apiToken' => $this->apiToken,
         ];
     }
 
-    public function getId () {
+    /**
+     * Gets Id
+     *
+     * @return int
+     */
+    public function getId() {
         return $this->id;
     }
 
-    public function getUserName () {
+    /**
+     * Gets username
+     *
+     * @return string
+     */
+    public function getUserName() {
         return $this->username;
     }
 
-    public function setUsername ($username) {
+    /**
+     * Sets username
+     *
+     * @param string $username Username
+     *
+     * @return $this
+     */
+    public function setUsername($username) {
         $this->username = $username;
+        return $this;
     }
 
-    public function getPassword () {
+    /**
+     * Gets password
+     *
+     * @return string
+     */
+    public function getPassword() {
         return $this->password;
     }
 
-    public function setPassword ($password) {
+    /**
+     * Sets password
+     *
+     * @param string $password Password
+     *
+     * @return $this
+     */
+    public function setPassword($password) {
         $this->password = $password;
+        return $this;
     }
 
-    public function getToken () {
+    /**
+     * Gets token
+     *
+     * @return string
+     */
+    public function getToken() {
         return $this->token;
     }
 
-    public function setToken ($token) {
+    /**
+     * Sets token
+     *
+     * @param string $token token
+     *
+     * @return $this
+     */
+    public function setToken($token) {
         $this->token = $token;
+        return $this;
     }
 
-    public function getApiToken () {
+    /**
+     * Gets API token
+     *
+     * @return string
+     */
+    public function getApiToken() {
         return $this->apiToken;
     }
 
-    public function setApiToken ($token) {
+    /**
+     * Sets API token
+     *
+     * @param string $token API token
+     *
+     * @return $this
+     */
+    public function setApiToken($token) {
         $this->apiToken = $token;
+        return $this;
     }
 
-    public function getGroups () {
+    /**
+     * Gets groups
+     *
+     * @return ArrayCollection
+     */
+    public function getGroups() {
         return $this->_groups;
     }
 
-    public function getCollection (string $entityName): Selectable {
+    /**
+     * Gets collection by entity name
+     *
+     * @param string $entityName Entity name
+     *
+     * @return Selectable
+     *
+     * @throws Exception
+     */
+    public function getCollection(string $entityName): Selectable {
         $this->checkEntityName($entityName);
         switch ($entityName) {
             case Group::class:
                 return $this->_groups;
-            default :
+            default:
                 throw new Exception('Device doesn\'t have relation to '.$entityName);
         }
     }
 
-    public function setRelation (string $entityName, ?Entity $value): self {
+    /**
+     * Sets relation entity
+     *
+     * @param string      $entityName Entity name
+     * @param Entity|null $value      Entity
+     *
+     * @return self
+     *
+     * @throws Exception
+     */
+    public function setRelation(string $entityName, ?Entity $value): self {
         throw new Exception('User doesn\'t have any "many to one" relation!');
     }
 

@@ -10,160 +10,292 @@ use SmartHome\Common\Abstracts\Entity;
 use SmartHome\Common\Exception;
 
 /**
+ * This file defines class for device entity.
+ *
  * @Entity @Table(name="devices")
- * */
+ */
 class Device extends Entity implements JsonSerializable {
 
     /**
-     * @Id @Column(type="integer") @GeneratedValue
+     * Id
      *
-     * @var int
+     * @var integer
+     *
+     * @Id @Column(type="integer") @GeneratedValue
      */
     protected $id;
 
     /**
-     * @Column(type="string")
+     * Name
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $name;
 
     /**
-     * @Column(type="string")
+     * Mac address
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $mac;
 
     /**
-     * @Column(type="string")
+     * IP Address
      *
      * @var string
+     *
+     * @Column(type="string")
      */
     protected $ipAddress;
 
     /**
-     * @Column{type="datetime"}
+     * Last registration
      *
      * @var DateTime
+     *
+     * @Column{type="datetime"}
      */
     protected $lastRegistration;
 
     /**
+     * Firmware
      *
      * @var Firmware
      *
      * @ManyToOne(targetEntity="Firmware", inversedBy="_devices")
-     * @JoinColumn(name="firmware_id", referencedColumnName="id")
+     * @JoinColumn(name="firmware_id",     referencedColumnName="id")
      */
     private $_firmware;
 
     /**
+     * Room
      *
      * @var Room
      *
      * @ManyToOne(targetEntity="Room", inversedBy="_devices")
-     * @JoinColumn(name="room_id", referencedColumnName="id")
+     * @JoinColumn(name="room_id",     referencedColumnName="id")
      */
     private $_room;
 
     /**
+     * Modules
+     *
      * @var ArrayCollection|Module[]
      *
      * @OneToMany(targetEntity="Module", mappedBy="_device")
      */
     private $_modules;
 
-    public function __construct () {
+    /**
+     * Contruct method
+     */
+    public function __construct() {
         $this->_modules = new ArrayCollection();
     }
 
-    public function jsonSerialize () {
+    /**
+     * Returns serialized data from JSON serialize.
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'mac' => $this->mac,
-            'ipAddress' => $this->ipAddress,
+            'id'               => $this->id,
+            'name'             => $this->name,
+            'mac'              => $this->mac,
+            'ipAddress'        => $this->ipAddress,
             'lastRegistration' => $this->lastRegistration,
         ];
     }
 
-    public function getId () {
+    /**
+     * Gets Id
+     *
+     * @return int
+     */
+    public function getId() {
         return $this->id;
     }
 
-    public function getName () {
+    /**
+     * Gets name
+     *
+     * @return string
+     */
+    public function getName() {
         return $this->name;
     }
 
-    public function setName ($name) {
+    /**
+     * Sets name
+     *
+     * @param string $name Name
+     *
+     * @return $this
+     */
+    public function setName($name) {
         $this->name = $name;
     }
 
-    public function getMac () {
+    /**
+     * Gets MAC address
+     *
+     * @return string
+     */
+    public function getMac() {
         return $this->mac;
     }
 
-    public function setMac ($mac) {
+    /**
+     * Sets MAC address
+     *
+     * @param string $mac MAC address
+     *
+     * @return $this
+     */
+    public function setMac($mac) {
         $this->mac = $mac;
+        return $this;
     }
 
-    public function getIpAddress () {
+    /**
+     * Gets IP address
+     *
+     * @return string
+     */
+    public function getIpAddress() {
         return $this->ipAddress;
     }
 
-    public function setIpAddress ($ipAddress) {
+    /**
+     * Sets IP address
+     *
+     * @param string $ipAddress IP address
+     *
+     * @return $this
+     */
+    public function setIpAddress($ipAddress) {
         $this->ipAddress = $ipAddress;
+        return $this;
     }
 
-    public function getLastRegistration () {
+    /**
+     * Gets last registration
+     *
+     * @return DateTime
+     */
+    public function getLastRegistration() {
         return $this->lastRegistration;
     }
 
-    public function setLastRegistration (DateTime $dateTime) {
+    /**
+     * Sets last registration
+     *
+     * @param DateTime $dateTime Date time
+     *
+     * @return $this
+     */
+    public function setLastRegistration(DateTime $dateTime) {
         $this->lastRegistration = $dateTime;
+
+        return $this;
     }
 
-    public function getFirmware () {
+    /**
+     * Gets firmware
+     *
+     * @return Firmware
+     */
+    public function getFirmware() {
         return $this->_firmware;
     }
 
-    public function setFirmware ($firmware) {
+    /**
+     * Sets firmware
+     *
+     * @param Firmware $firmware Firmware
+     *
+     * @return $this
+     */
+    public function setFirmware($firmware) {
         $this->_firmware = $firmware;
+
+        return $this;
     }
 
-    public function getRoom () {
+    /**
+     * Gets room
+     *
+     * @return Room
+     */
+    public function getRoom() {
         return $this->_room;
     }
 
-    public function setRoom ($room) {
+    /**
+     * Sets room
+     *
+     * @param Room $room Room
+     *
+     * @return $this
+     */
+    public function setRoom($room) {
         $this->_room = $room;
+        return $this;
     }
 
-    public function getModules () {
+    /**
+     * Gets modules
+     *
+     * @return ArrayCollection
+     */
+    public function getModules() {
         return $this->_modules;
     }
 
-    public function getCollection (string $entityName): Selectable {
+    /**
+     * Gets collection by entity name
+     *
+     * @param string $entityName Entity name
+     *
+     * @return Selectable
+     *
+     * @throws Exception
+     */
+    public function getCollection(string $entityName): Selectable {
         $this->checkEntityName($entityName);
         switch ($entityName) {
             case Module::class:
                 return $this->_modules;
-            default :
+            default:
                 throw new Exception('Device doesn\'t have relation to '.$entityName);
         }
     }
 
-    public function setRelation (string $entityName, ?Entity $value): self {
+    /**
+     * Sets relation entity
+     *
+     * @param string      $entityName Entity name
+     * @param Entity|null $value      Entity
+     *
+     * @return self
+     *
+     * @throws Exception
+     */
+    public function setRelation(string $entityName, ?Entity $value): self {
         $this->checkEntityName($entityName);
         switch ($entityName) {
             case Room::class:
-                $this->_room = $value;
+                $this->_room     = $value;
                 break;
             case Firmware::class:
                 $this->_firmware = $value;
                 break;
-            default :
+            default:
                 throw new Exception('Device doesn\'t have relation to '.$entityName);
         }
 

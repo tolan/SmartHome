@@ -8,28 +8,38 @@ use SmartHome\Enum\Topic;
 use GuzzleHttp\Client;
 use Monolog\Logger;
 use Exception;
+use DI\Container;
 
 /**
- * This file defines class for ...
+ * This file defines class for restart worker
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Restart extends AWorker {
 
     /**
+     * Logger instance
+     *
      * @var Logger
      */
     private $_logger;
 
     /**
-     * @Inject({"container", "logger"})
+     * Construct method for inject container
+     *
+     * @param Container $container Container
      */
-    public function __construct ($container, $logger) {
+    public function __construct(Container $container) {
         parent::__construct($container);
-        $this->_logger = $logger;
+        $this->_logger = $container->get('logger');
     }
 
-    public function prepare () {
+    /**
+     * Prepare worker
+     *
+     * @return void
+     */
+    public function prepare() {
         $topics = [
             Topic::DEVICE_RESTART => [
                 'function' => function (string $topic, string $message) {
@@ -40,13 +50,21 @@ class Restart extends AWorker {
         $this->subscribe($topics);
     }
 
-    public function receive (string $topic, string $message) {
+    /**
+     * Receives message
+     *
+     * @param string $topic   Topic
+     * @param string $message Message
+     *
+     * @return void
+     */
+    protected function receive(string $topic, string $message) {
         $device = JSON::decode($message);
 
         $client = new Client();
 
         try {
-            $address = 'http://'.$device['ipAddress'].'/restart';
+            $address  = 'http://'.$device['ipAddress'].'/restart';
             $response = $client->get($address);
             $this->_logger->info('Device restart success: '.$response->getBody());
         } catch (Exception $e) {

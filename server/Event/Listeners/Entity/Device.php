@@ -6,23 +6,36 @@ use SmartHome\Event\Abstracts\AMessage;
 use SmartHome\Service;
 
 /**
- * This file defines class for ...
+ * This file defines listener class for devices.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Device extends AListener {
 
     /**
+     * Device service
      *
      * @var Service\Device
      */
     private $_service;
 
-    public function __construct (Service\Device $service) {
+    /**
+     * Construct method for inject service.
+     *
+     * @param Service\Device $service Device service
+     */
+    public function __construct(Service\Device $service) {
         $this->_service = $service;
     }
 
-    public function receive (AMessage $message) {
+    /**
+     * Receives message
+     *
+     * @param AMessage $message Message
+     *
+     * @return void
+     */
+    public function receive(AMessage $message) {
         $this->_service->receive($message);
     }
 

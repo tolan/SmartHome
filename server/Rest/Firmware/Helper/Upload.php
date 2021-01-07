@@ -8,13 +8,21 @@ use SmartHome\Enum\Topic;
 use SmartHome\Entity\Firmware;
 
 /**
- * This file defines class for ...
+ * This file defines class for firmware upload helper
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class Upload {
 
-    public static function sentFirmwareUpdate (Firmware $firmware, MQTT $mqtt) {
+    /**
+     * Sends firmware update message
+     *
+     * @param Firmware $firmware Firmware
+     * @param MQTT     $mqtt     MQTT client
+     *
+     * @return void
+     */
+    public static function sentFirmwareUpdate(Firmware $firmware, MQTT $mqtt) {
         $data = [
             'firmware' => $firmware,
         ];

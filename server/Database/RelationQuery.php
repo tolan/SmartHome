@@ -5,32 +5,48 @@ namespace SmartHome\Database;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * This file defines class for ...
+ * This file defines class for build relation query.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
 class RelationQuery extends Abstracts\Query {
 
     /**
+     * Sets of RelationsQuery
      *
      * @var RelationQuery[]
      */
     private $_relations = [];
 
-    public function with (RelationQuery $query): self {
+    /**
+     * Assigns RelationQuery
+     *
+     * @param RelationQuery $query Relation query
+     *
+     * @return self
+     */
+    public function with(RelationQuery $query): self {
         $this->_relations[] = $query;
 
         $query->setParent($this);
         return $this;
     }
 
-    public function build (QueryBuilder $dql): QueryBuilder {
+    /**
+     * Builds relations to query
+     *
+     * @param QueryBuilder $dql Query builder
+     *
+     * @return QueryBuilder
+     */
+    public function build(QueryBuilder $dql): QueryBuilder {
         $dql->select(join(', ', array_merge($dql->getAllAliases(), [$this->getAlias()])));
 
         $matchStrings = ['mappedBy', 'inversedBy'];
-        $matchedBy = null;
+        $matchedBy    = null;
         foreach ($matchStrings as $match) {
-            if (($matchedBy = $this->getEntityName()::findMappedBy($this->getParent()->getEntityName(), $match))) {
+            $matchedBy = $this->getEntityName()::findMappedBy($this->getParent()->getEntityName(), $match);
+            if ($matchedBy) {
                 break;
             }
         }
@@ -47,10 +63,11 @@ class RelationQuery extends Abstracts\Query {
     }
 
     /**
+     * Returns relations
      *
      * @return RelationQuery[]
      */
-    protected function getRelations (): array {
+    protected function getRelations(): array {
         return $this->_relations;
     }
 
