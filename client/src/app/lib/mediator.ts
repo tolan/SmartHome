@@ -1,5 +1,7 @@
 import {Container} from './container';
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class Mediator {
 
     private container: Container;
