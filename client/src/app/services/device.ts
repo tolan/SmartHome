@@ -9,7 +9,6 @@ import {timeInterval, filter} from 'rxjs/operators';
 import {Device} from '../interfaces/device';
 import {Module} from '../interfaces/module';
 
-
 interface Monitor {
     module: Module,
     cb: (module: Module) => void

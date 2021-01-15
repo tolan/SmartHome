@@ -1,0 +1,32 @@
+@import "../../../../../mixins.less";
+
+.process-row {
+    height: 75px;
+
+    .id  {
+        .elipsis-left();
+        width: 300px;
+        padding-right: 20px;
+    }
+
+    .command {
+        .elipsis();
+        width: 300px;
+    }
+
+    .starts {
+        text-align: center;
+    }
+
+    .starts, .runningTime {
+        width: 75px;
+    }
+
+    .state {
+        flex: 1;
+    }
+
+    mat-icon {
+        cursor: pointer;
+    }
+}

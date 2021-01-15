@@ -1,0 +1,20 @@
+<mat-list-item class="process-row">
+    <div class="id">
+        {{process.process.id}}
+    </div>
+    <div class="command">
+        {{process.process.command}}
+    </div>
+    <div class="starts">
+        {{process.process.starts}}
+    </div>
+    <div class="runningTime">
+        {{process.process.runningTime | hoursMinutesSeconds }}
+    </div>
+    <div class="state">
+        {{process.process.state}}
+    </div>
+    <div class="actions">
+        <button mat-button (click)="restart()"><mat-icon>settings_backup_restore</mat-icon></button>
+    </div>
+</mat-list-item>

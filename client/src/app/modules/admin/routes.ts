@@ -8,6 +8,7 @@ import {PermissionsComponent} from './components/permissions/permissions';
 import {RoomsComponent} from './components/rooms/rooms';
 import {DevicesComponent} from './components/devices/devices';
 import {FirmwaresComponent} from './components/firmwares/firmwares';
+import {ProcessesComponent} from './components/processes/processes';
 
 const adminRoutes: Routes = [
     {
@@ -54,6 +55,13 @@ const adminRoutes: Routes = [
                 component: FirmwaresComponent,
                 data: {
                     title: 'Firmware',
+                },
+            },
+            {
+                path: 'processes',
+                component: ProcessesComponent,
+                data: {
+                    title: 'Procesy',
                 },
             },
         ]

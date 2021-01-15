@@ -36,6 +36,9 @@ import {DevicesRowModuleControlComponent} from './components/devices/device/modu
 import {FirmwaresComponent} from './components/firmwares/firmwares';
 import {FirmwaresRowComponent} from './components/firmwares/row/row';
 import {FirmwaresRowHeaderComponent} from './components/firmwares/row-header/header';
+import {ProcessesComponent} from './components/processes/processes';
+import {ProcessesRowComponent} from './components/processes/row/row';
+import {ProcessesRowHeaderComponent} from './components/processes/row-header/header';
 
 import {AdminRoutingModule} from './routes';
 
@@ -79,6 +82,9 @@ import {AdminRoutingModule} from './routes';
         FirmwaresComponent,
         FirmwaresRowComponent,
         FirmwaresRowHeaderComponent,
+        ProcessesComponent,
+        ProcessesRowComponent,
+        ProcessesRowHeaderComponent,
     ],
 })
 export class AdminModule {}

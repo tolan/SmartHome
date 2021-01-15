@@ -114,4 +114,25 @@ class Container {
         return $this;
     }
 
+    /**
+     * Returns info about tasks.
+     *
+     * @return array
+     */
+    public function getTasksInfo(): array {
+        $info = [];
+        foreach ($this->_tasks as $task) {
+            $info[] = [
+                'id'        => $task->getId(),
+                'command'   => $task->getCommand(),
+                'params'    => $task->getParams(),
+                'startTime' => $task->getStartTime(),
+                'starts'    => $task->getStarts(),
+                'state'     => $task->getState(),
+            ];
+        }
+
+        return $info;
+    }
+
 }

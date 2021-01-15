@@ -8,6 +8,7 @@ use SmartHome\Common\{
 };
 use SmartHome\Enum\{
     ProcessTaskState,
+    ProcessControlAction,
     Topic
 };
 use Symfony\Component\Process\{
@@ -116,6 +117,15 @@ class Task {
         $phpBinaryPath   = $phpBinaryFinder->find();
 
         $this->_process = new Process(array_merge([$phpBinaryPath, $this->_command, $this->_id], $this->_params));
+    }
+
+    /**
+     * Returns task ID
+     *
+     * @return string
+     */
+    public function getId(): string {
+        return $this->_id;
     }
 
     /**
@@ -298,8 +308,8 @@ class Task {
      * @throws Exception Throws when init timeout exceeded
      */
     public function init() {
-        $self   = $this;
-        $topics = [
+        $self                                 = $this;
+        $topics                               = [
             Topic::PROCESS_STATE.'/'.$this->_id => [
                 'qos'      => 0,
                 'function' => function (string $topic, string $message) use ($self) {
@@ -307,7 +317,18 @@ class Task {
                     $self->_state     = $data['state'];
                     $self->_timestamp = $data['timestamp'];
                 },
-            ]
+            ],
+            Topic::PROCESS_CONTROL.'/'.$this->_id => [
+                'qos'      => 0,
+                'function' => function (string $topic, string $message) use ($self) {
+                    $data = JSON::decode($message);
+                    switch ($data['action']) {
+                        case ProcessControlAction::RESTART:
+                            $self->stop()->start();
+                            break;
+                    }
+                },
+            ],
         ];
 
         $this->_mqtt->subscribe($topics);
