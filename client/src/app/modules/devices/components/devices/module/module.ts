@@ -72,15 +72,15 @@ export class ModuleComponent implements OnInit, OnDestroy {
     }
 
     private _mergeControls(module: Module, controls: Control[]) {
-        return this._buildControls(module).map((control: Control) => {
-            let originControl = controls.find((originControl: Control) => control.control.id === originControl.control.id);
-            if (this.edited && this.edited[control.control.id]) {
-                originControl = this.edited[control.control.id];
-            } else if (originControl) {
-                originControl = Object.assign({}, originControl, control);
+        return this._buildControls(module).reduce((acc: Control[], control: Control, key: number) => {
+            let originControl = acc.find((originControl: Control) => control.control.id === originControl.control.id);
+            if (!originControl) {
+                acc = acc.concat(control);
+            } else if (!this.edited || !this.edited[control.control.id]) {
+                acc[key] = Object.assign({}, originControl, control);
             }
 
-            return originControl
-        })
+            return acc
+        }, controls)
     }
 }

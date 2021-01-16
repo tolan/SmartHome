@@ -22,7 +22,7 @@ export class PwmComponent implements OnInit {
 
     public controlForm: any;
 
-    private steps: number[] = [0, 0.5, 1, 2, 3, 4, 5, 7.5, 10, 15, 20, 35, 50, 75, 100];
+    private steps: number[] = [0, 0.1, 0.5, 1, 2, 3, 4, 5, 7.5, 10, 15, 20, 35, 50, 75, 100];
 
     private subject: any;
 
@@ -78,9 +78,13 @@ export class PwmComponent implements OnInit {
 
 
     changeValue(event: {value: number}) {
-        this.controlForm.value.value = event.value;
+        this.controlForm.value.value = event.value !== undefined ? event.value : this.controlForm.value.value;
         this.onEdit.emit(this._getControl());
-        this.subject.next(event.value);
+        this.subject.next(this.controlForm.value.value);
+    }
+
+    focus() {
+        this.onEdit.emit(this._getControl());
     }
 
     private _emitChange() {

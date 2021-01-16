@@ -12,7 +12,7 @@
             thumbLabel="true"
             tickInterval="auto"
             [value]="data.delay.value"
-            (change)="changeDelayValue($event)"
+            (input)="changeDelayValue($event)"
             >
         </mat-slider>
         <span class="delay-value-title">{{data.delay.value + ' ' + data.delay.unit}}</span>

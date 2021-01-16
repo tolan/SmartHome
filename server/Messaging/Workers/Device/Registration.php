@@ -153,7 +153,7 @@ class Registration extends AWorker {
 
                 $resolution           = ($module->getSettingsData()['resolution'] ?? 8);
                 $controlData          = $control->getControlData();
-                $controlData['value'] = ($controlData['value']) ? (2 ^ $resolution - 1) : 0;
+                $controlData['value'] = ($controlData['value']) ? (pow(2, $resolution) - 1) : 0;
                 unset($controlData['delay']);
                 $control->setControlData($controlData);
 

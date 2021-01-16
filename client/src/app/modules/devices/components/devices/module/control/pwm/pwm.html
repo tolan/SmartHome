@@ -13,6 +13,7 @@
                 (change)="changeValue($event)"
                 list="preferedValues"
                 formControlName="value"
+                (focus)="focus()"
                 >
             <span matSuffix>/{{max}}</span>
             <datalist id="preferedValues">

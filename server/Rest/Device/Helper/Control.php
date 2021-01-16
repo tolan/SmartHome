@@ -92,7 +92,7 @@ class Control {
 
                 if ($pwm && $controlData['value']) {
                     $resolution           = (($module->getSettingsData()['resolution']) ?? 8);
-                    $controlData['value'] = ($pwm->getControlData()['value']) ? $pwm->getControlData()['value'] : (2 ^ ($resolution - 1));
+                    $controlData['value'] = ($pwm->getControlData()['value']) ? $pwm->getControlData()['value'] : (pow(2, $resolution) - 1);
                     $control->setControlData($controlData);
 
                     if (!$pwm->getControlData()['value']) {
