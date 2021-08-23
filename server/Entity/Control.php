@@ -52,7 +52,7 @@ class Control extends Entity implements JsonSerializable {
     private $_module;
 
     /**
-     * Returns serialized data from JSON serialize.
+     * Returns data for JSON serialize.
      *
      * @return array
      */

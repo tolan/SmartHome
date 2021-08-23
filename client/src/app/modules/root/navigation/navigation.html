@@ -1,0 +1,7 @@
+<mat-toolbar *ngIf="sections.length" color="primary" class="navigation">
+    <a class="link" *ngFor="let section of sections" routerLink='{{section.link}}' routerLinkActive="active" [ngClass]="section.class">{{section.name}}</a>
+
+    <div class="fill-remaining-space"></div>
+
+    <a class="logout" (click)="onLogout()">Odhlásit</a>
+</mat-toolbar>

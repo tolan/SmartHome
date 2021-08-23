@@ -1,5 +1,7 @@
 <?php
 
+const SQL_QUERY_LOG = true;
+
 require_once __DIR__.'/bootstrap.php';
 
 $container     = $app->getContainer();

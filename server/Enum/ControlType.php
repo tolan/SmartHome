@@ -11,9 +11,10 @@ use \SplEnum;
  */
 class ControlType extends SplEnum {
 
-    const SWITCH = 'switch';
-    const PWM    = 'pwm';
-    const FADE   = 'fade';
-    const MQTT   = 'mqtt';
+    const SWITCH  = 'switch';
+    const PWM     = 'pwm';
+    const FADE    = 'fade';
+    const MQTT    = 'mqtt';
+    const UP_DOWN = 'up_down';
 
 }

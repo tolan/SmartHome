@@ -170,6 +170,7 @@ final class Service {
         $toEntity = get_class($to);
 
         if (!empty($what)) {
+            $to->getCollection($whatEntity)->clear();
             array_map(function(Entity $entity) use ($to, $whatEntity, $toEntity) {
                 $to->getCollection($whatEntity)->add($entity);
                 $entity->setRelation($toEntity, $to);

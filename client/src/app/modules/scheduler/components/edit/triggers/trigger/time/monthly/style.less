@@ -1,0 +1,28 @@
+@import "../../../../../../../../mixins.less";
+
+.monthly {
+    .days {
+        padding: 6px;
+        margin: 4px;
+        padding-bottom: 37px;
+
+        mat-button-toggle-group {
+            width: 44px;
+
+            mat-button-toggle {
+                width: 100%;
+            }
+        }
+
+        &.error {
+            padding: 5px;
+            border: 1px solid @warning-color;
+
+            mat-hint {
+                display: block;
+                margin: 6px;
+                color: @warning-color;
+            }
+        }
+    }
+}

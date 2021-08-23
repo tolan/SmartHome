@@ -1,0 +1,66 @@
+@import "../../../../mixins.less";
+
+.task {
+    border: 1px solid rgba(0,0,0,.12);
+    margin: 8px 12px 12px 12px;
+    color: rgba(0,0,0,.87);
+    background-color: #fff;
+    padding: 12px;
+    height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+
+        .name {
+            flex: 1;
+        }
+
+        .delete {
+            text-align: right;
+
+        }
+
+        .share, .enabled {
+            text-align: right;
+            margin-top: 16px;
+            margin-right: 12px;
+
+            mat-label {
+                margin: 0px 6px;
+            }
+        }
+    }
+
+    .footer {
+        text-align: right;
+    }
+
+    mat-form-field {
+        width: 300px;
+    }
+
+    mat-tab-group {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    triggers, conditions, actions {
+        margin: 6px;
+        display: block;
+    }
+
+    .error {
+        color: @warning-color;
+    }
+
+    mat-hint {
+        color: @warning-color;
+    }
+}
+
+.delete-title {
+    padding: 12px;
+    cursor: pointer;
+}

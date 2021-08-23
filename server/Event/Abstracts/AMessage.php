@@ -2,12 +2,14 @@
 
 namespace SmartHome\Event\Abstracts;
 
+use JsonSerializable;
+
 /**
  * This file defines abstarct class for event messages.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */
-abstract class AMessage {
+abstract class AMessage implements JsonSerializable {
 
     /**
      * Message data
@@ -32,6 +34,18 @@ abstract class AMessage {
      */
     public function getData() {
         return $this->_data;
+    }
+
+    /**
+     * Returns data for JSON serialize.
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
+        return [
+            'class' => get_class($this),
+            'data'  => $this->_data,
+        ];
     }
 
 }

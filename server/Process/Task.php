@@ -348,7 +348,7 @@ class Task {
             }
 
             if ($this->_state !== ProcessTaskState::INIT) {
-                usleep(100 * 1000);
+                usleep(10 * 1000);
             }
         } while ($this->_state !== ProcessTaskState::INIT);
 

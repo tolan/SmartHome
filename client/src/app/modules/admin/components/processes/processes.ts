@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core'
 
-import {ProcessService} from '../../../../services/process';
+import {ProcessService} from '../../../../services/process'
 
-import {Process} from '../../../../interfaces/process';
+import {Process} from '../../../../interfaces/process'
 
 @Component({
     selector: 'processes',
@@ -11,22 +11,26 @@ import {Process} from '../../../../interfaces/process';
 })
 export class ProcessesComponent implements OnInit {
 
-    processes: Process[] = [];
+    processes: Process[] = []
 
     constructor(private processService: ProcessService) {}
 
     ngOnInit() {
         this.processService.enableMonitor().getProcesses().subscribe((processes: [Process]) => {
-            this.processes = processes;
-        }, 'ProcessesComponent');
+            this.processes = processes
+        }, 'ProcessesComponent')
     }
 
     ngOnDestroy() {
-        this.processService.disableMonitor();
+        this.processService.disableMonitor().getProcesses().unsubscribe('ProcessesComponent')
     }
 
     restart(process: Process) {
-        this.processService.restart(process);
+        this.processService.restart(process)
+    }
+
+    trackByFn(_, process: Process) {
+        return process.process.id
     }
 
 }

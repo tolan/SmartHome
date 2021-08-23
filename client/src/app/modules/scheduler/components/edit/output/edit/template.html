@@ -1,0 +1,55 @@
+<div class="output">
+    <div class="list">
+        <div class="item" *ngFor="let item of output.defaults">
+            <div class="wrapper">
+                <div class="key">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Klíč</mat-label>
+                        <span matPrefix>{{'{'}}</span>
+                        <input matInput [readonly]='true' [value]="item.key">
+                        <span matSuffix>{{'}'}}</span>
+                    </mat-form-field>
+                </div>
+                <div class="value">
+                    <mat-form-field appearance="outline">
+                        <span matPrefix>{{'{'}}</span>
+                        <mat-label>Hodnota</mat-label>
+                        <span matSuffix>{{'}'}}</span>
+                        <input matInput [readonly]='true' [value]="item.value">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="item" *ngFor="let item of output.custom; index as key">
+            <div class="wrapper">
+                <div class="key" [ngClass]="(!validation[key].key.required || !validation[key].key.unique) ? 'error' : ''">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Klíč</mat-label>
+                        <span matPrefix>{{'{'}}</span>
+                        <input matInput [value]="item.key" (input)="changeOutputKey(item, $event.target.value)">
+                        <span matSuffix>{{'}'}}</span>
+                        <mat-hint *ngIf="!validation[key].key.required">* Vyžadováno</mat-hint>
+                        <mat-hint *ngIf="!validation[key].key.unique">* Klíč musí být unikátní</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="value" [ngClass]="!validation[key].value ? 'error' : ''">
+                    <mat-form-field appearance="outline">
+                        <span matPrefix>{{'{'}}</span>
+                        <mat-label>Hodnota</mat-label>
+                        <span matSuffix>{{'}'}}</span>
+                        <input matInput [value]="item.value" (input)="changeOutputValue(item, $event.target.value)">
+                        <mat-hint *ngIf="!validation[key].value">* Vyžadováno</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+            <button class="close" mat-button (click)="removeOutput(item)">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="add">
+        <button mat-button (click)="addOutput()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</div>

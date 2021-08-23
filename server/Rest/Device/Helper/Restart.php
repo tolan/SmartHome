@@ -23,7 +23,7 @@ class Restart {
      * @return void
      */
     public static function send(MQTT $mqtt, Device $device) {
-        $mqtt->publish(Topic::DEVICE_RESTART, JSON::encode($device));
+        $mqtt->publish(Topic::DEVICE_RESTART, JSON::encode($device), 0, 0, true);
     }
 
 }

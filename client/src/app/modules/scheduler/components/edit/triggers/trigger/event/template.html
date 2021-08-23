@@ -1,0 +1,29 @@
+<div class="event">
+    <div class="type">
+        <mat-form-field appearance="outline">
+            <mat-label>Událost</mat-label>
+            <mat-select (selectionChange)="changeType($event.value)" [value]="value.type">
+                <mat-option *ngFor="let eventType of TriggerEventTypeText" [value]="eventType[0]">{{eventType[1]}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="element" [ngSwitch]="value.type">
+        <trigger-event-device
+            [value]="value.data"
+            *ngSwitchCase="TriggerEventType.DEVICE"
+            (onChange)="changeData($event)"
+            (onValidate)="changeValidation($event)"
+            (onMeta)="changeMeta($event)"
+            >
+        </trigger-event-device>
+        <trigger-event-sun
+            [value]="value.data || {}"
+            *ngSwitchCase="TriggerEventType.SUN"
+            (onChange)="changeData($event)"
+            (onValidate)="changeValidation($event)"
+            (onMeta)="changeMeta($event)"
+            >
+        </trigger-event-sun>
+    </div>
+</div>

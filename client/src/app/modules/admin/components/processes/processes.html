@@ -2,7 +2,7 @@
     <mat-list>
         <processes-row-header></processes-row-header>
     </mat-list>
-    <mat-list *ngFor="let process of processes">
+    <mat-list *ngFor="let process of processes; trackBy: trackByFn">
         <mat-divider></mat-divider>
         <processes-row
             [process]="process"

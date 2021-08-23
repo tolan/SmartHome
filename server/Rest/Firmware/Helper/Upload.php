@@ -27,7 +27,7 @@ class Upload {
             'firmware' => $firmware,
         ];
 
-        $mqtt->publish(Topic::FIRMWARE_UPGRADE, JSON::encode($data));
+        $mqtt->publish(Topic::FIRMWARE_UPGRADE, JSON::encode($data), 0, 0, true);
     }
 
 }

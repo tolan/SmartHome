@@ -11,8 +11,10 @@ use SplEnum;
  */
 class Topic extends SplEnum {
 
+    const EVENT_MESSAGE          = 'smartHome/event/message';
     const PROCESS_STATE          = 'smartHome/process/state';
     const PROCESS_CONTROL        = 'smartHome/process/control';
+    const PROCESS_INFO           = 'smartHome/process/info';
     const TIMER_START            = 'smartHome/timer/start';
     const TIMER_STOP             = 'smartHome/timer/stop';
     const DEVICE_KEEP_ALIVE      = 'smartHome/device/keepAlive';
@@ -24,5 +26,8 @@ class Topic extends SplEnum {
     const DEVICE_CONTROL_MQTT    = 'smartHome/device/controlMqtt';
     const DEVICE_RESTART         = 'smartHome/device/restart';
     const FIRMWARE_UPGRADE       = 'smartHome/firmware/upgrade';
+    const SCHEDULER_TRIGGER_TIME = 'smartHome/scheduler/time';
+    const SCHEDULER_TRIGGER_SUN  = 'smartHome/scheduler/sun';
+    const SCHEDULER_TRIGGER_MQTT = 'smartHome/scheduler/mqtt';
 
 }

@@ -13,16 +13,14 @@ use SmartHome\Entity\{
     Control,
     Timer
 };
-use SmartHome\Enum\{
-    Topic,
-    ControlType
-};
+use SmartHome\Enum\Topic;
 use SmartHome\Rest\Device\Helper\Control as ControlHelper;
 use SmartHome\Common\MQTT;
 use DateTimeZone;
 use DI\Container;
 use SmartHome\Common\Service;
 use SmartHome\Database\EntityQuery;
+use SmartHome\Messaging\Workers\Device\Module\Abstracts\Builder;
 
 /**
  * This file defines class for registration worker
@@ -64,12 +62,17 @@ class Registration extends AWorker {
      * @return void
      */
     public function prepare() {
-        $topics = [
+        $topics                       = [
             Topic::DEVICE_REGISTRATION => [
                 'function' => function (string $topic, string $message) {
                     $this->receive($topic, $message);
                 },
             ],
+            Topic::DEVICE_KEEP_ALIVE_FAIL => [
+                'function' => function (string $topic, string $message) {
+                    $this->receive($topic, $message);
+                },
+            ]
         ];
         $this->subscribe($topics);
     }
@@ -85,19 +88,27 @@ class Registration extends AWorker {
     protected function receive(string $topic, string $message) {
         $data = array_filter(JSON::decode($message));
 
-        $device = $this->_syncDb($data);
-        $this->_establishTimer($device);
-        $this->_initDevice($device);
+        switch ($topic) {
+            case Topic::DEVICE_REGISTRATION:
+                $device = $this->_syncDb($data, true);
+                $this->_establishTimer($device);
+                $this->_initDevice($device);
+                break;
+            case Topic::DEVICE_KEEP_ALIVE_FAIL:
+                $this->_syncDb($data, false);
+                break;
+        }
     }
 
     /**
      * Makes synchronization with database
      *
-     * @param array $data Array with mac and ip address
+     * @param array   $data     Array with mac and ip address
+     * @param boolean $isActive isActive flag
      *
      * @return Device
      */
-    private function _syncDb($data): Device {
+    private function _syncDb($data, bool $isActive): Device {
         $query  = EntityQuery::create(Device::class, [], ['mac' => $data['mac']]);
         $device = $this->_service->findOne($query); /* @var $device Device */
 
@@ -109,6 +120,7 @@ class Registration extends AWorker {
 
         $device->setIpAddress($data['ipAddress']);
         $device->setLastRegistration((new DateTime())->setTimezone(new DateTimeZone('UTC')));
+        $device->setIsActive($isActive);
 
         $this->_service->persist($device, true);
 
@@ -142,31 +154,17 @@ class Registration extends AWorker {
      */
     private function _initDevice(Device $device) {
         foreach ($device->getModules()->toArray() as $module) { /* @var $module Module */
-            $controls = $module->getControls();
-            $filterSw = function(Control $element) {
-                return $element->getType() === ControlType::SWITCH;
-            };
-            $switch = $controls->filter($filterSw)->first(); /* @var $switch Control */
+            $builder = Builder::getBuilder($module); /* @var $builder Module\Abstracts\Builder */
+            $control = $builder->prepareForInit(); /* @var $control Control */
 
-            if ($switch) {
-                $control = clone $switch;
-
-                $resolution           = ($module->getSettingsData()['resolution'] ?? 8);
-                $controlData          = $control->getControlData();
-                $controlData['value'] = ($controlData['value']) ? (pow(2, $resolution) - 1) : 0;
-                unset($controlData['delay']);
-                $control->setControlData($controlData);
-
-                $filterPwm = function(Control $element) {
-                    return $element->getType() === ControlType::PWM;
-                };
-                $pwm = $controls->filter($filterPwm)->first(); /* @var $pwm Control */
-
-                if ($pwm && $controlData['value']) {
-                    $control->setControlData($pwm->getControlData());
+            if ($control) {
+                $firmvare = $device->getFirmware();
+                if ($firmvare->getName() === 'v1.2.0') {
+                    $control->setType($module->getType().'_'.self::INIT);
+                } else {
+                    $control->setType(self::INIT);
                 }
 
-                $control->setType(self::INIT);
                 ControlHelper::sendControlUpdate($this->_mqtt, $device, $module, $control);
             }
         }

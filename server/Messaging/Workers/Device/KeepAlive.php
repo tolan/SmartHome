@@ -4,10 +4,13 @@ namespace SmartHome\Messaging\Workers\Device;
 
 use SmartHome\Messaging\Abstracts\AWorker;
 use SmartHome\Enum\Topic;
-use GuzzleHttp\Client;
+use GuzzleHttp\{
+    Client,
+    RequestOptions
+};
 use SmartHome\Common\Utils\JSON;
 use SmartHome\Entity\Timer;
-use Exception;
+use Throwable;
 use Monolog\Logger;
 use DI\Container;
 
@@ -18,7 +21,8 @@ use DI\Container;
  */
 class KeepAlive extends AWorker {
 
-    const MAX_ATTEMPTS = 3;
+    const MAX_ATTEMPTS   = 9;
+    const ACTIVE_TIMEOUT = 60;
 
     /**
      * Logger
@@ -77,15 +81,22 @@ class KeepAlive extends AWorker {
             $this->_attempts[$address] = self::MAX_ATTEMPTS;
         }
 
-        try {
-            $client->get($address);
-            $this->_attempts[$address] = self::MAX_ATTEMPTS;
-        } catch (Exception $e) {
-            $this->_attempts[$address]--;
-            $this->_logger->warning('KEEP-ALIVE ERR: '.$address.' (attempts: '.$this->_attempts[$address].')');
-        }
+        $attempts = 3;
+        do {
+            try {
+                $client->get($address, [RequestOptions::TIMEOUT => 5]);
+                $this->_attempts[$address] = self::MAX_ATTEMPTS;
+                $attempts                  = 0;
+                break;
+            } catch (Throwable $err) {
+                $attempts--;
+                $this->_attempts[$address]--;
+                $this->_logger->warning('KEEP-ALIVE ERR: '.$address.' (attempts: '.$this->_attempts[$address].')', [$err]);
+                usleep(1000 * 1000);
+            }
+        } while ($attempts > 0);
 
-        if ($this->_attempts[$address] === 0) {
+        if ($this->_attempts[$address] <= 0) {
             $timer = new Timer();
             $timer->setName('device_keep_alive_'.$data['id']);
             $timer->setTimeout('0');

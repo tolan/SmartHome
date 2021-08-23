@@ -1,0 +1,27 @@
+.picker {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 196px;
+    padding: 2px;
+
+    .element, mat-form-field {
+        width: 64px;
+        text-align: center;
+    }
+
+    .separator {
+        width: 32px;
+    }
+}
+

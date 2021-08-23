@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {ContainerFactory, Container} from '../lib/container';
+import {SocketEventBuilder} from '../utils/socket'
 
-import {interval} from 'rxjs';
-import {timeInterval, filter} from 'rxjs/operators';
+import {SocketEventType} from '../enums/socket'
 
 import {Process} from '../interfaces/process';
 
@@ -14,19 +14,13 @@ export class ProcessService {
 
     private container: Container;
     private subject: any;
-    private activeMonitor: boolean = false;
 
-    constructor(private http: HttpClient, containerFactory: ContainerFactory) {
+    constructor(
+        private http: HttpClient,
+        private socketEventBuilder: SocketEventBuilder,
+        containerFactory: ContainerFactory
+    ) {
         this.container = containerFactory.getContainer('ProcessService');
-        this._fetchProcesses();
-
-        this.subject = interval(1000);
-        this.subject.pipe(
-            timeInterval(),
-            filter(() => Boolean(this.activeMonitor))
-        ).subscribe(() => {
-            this._fetchProcesses(true);
-        });
     }
 
     getProcesses() {
@@ -34,26 +28,28 @@ export class ProcessService {
     }
 
     enableMonitor() {
-        this.activeMonitor = true;
+        this.subject = this.socketEventBuilder.subscribe(SocketEventType.PROCESS_STATES)
+            .subscribe((data) => {
+                this.container.set('processes', data.data.map((process) => {
+                    return {
+                        process: {
+                            ...process,
+                            runningTime: (Date.now() / 1000) - (process.startTime * 1000)
+                        },
+                    }
+                }))
+            })
         return this;
     }
 
     disableMonitor() {
-        this.activeMonitor = false;
+        if (this.subject) {
+            this.subject.unsubscribe()
+        }
         return this;
     }
 
     restart(process: Process) {
-        this.http.post('/api/0/process/restart', {...process}).subscribe(() => {
-            this._fetchProcesses();
-        });
-    }
-
-    private _fetchProcesses(silent: boolean = false) {
-        const headers = silent ? new HttpHeaders({'X-Silent': 'true'}) : {};
-
-        this.http.get('/api/0/processes', {headers}).subscribe((processes: [Process]) => {
-            this.container.set('processes', processes);
-        });
+        this.http.post('/api/0/process/restart', {...process}).subscribe()
     }
 }

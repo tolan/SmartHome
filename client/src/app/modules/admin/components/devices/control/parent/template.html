@@ -1,0 +1,9 @@
+<div class="control">
+    <mat-checkbox
+        [disabled]="!isEditing"
+        [checked]="data.active"
+        (change)="changeActive($event)"
+        >
+        {{ControlName[control.control.type]}}
+    </mat-checkbox>
+</div>

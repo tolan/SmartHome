@@ -1,0 +1,21 @@
+<div class="monthly">
+    <div class="days" [ngClass]="!validation.days ? 'error' : ''">
+        <mat-button-toggle-group *ngFor="let day of DAYS">
+            <mat-button-toggle
+                [checked]="value.days[day]"
+                (change)="changeDay(day)"
+                >
+                {{day}}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+        <mat-hint *ngIf="!validation.days">* Vyžadováno</mat-hint>
+    </div>
+    <div class="times">
+        <trigger-time-daily
+            [value]="value"
+            (onChange)="changeData($event)"
+            (onValidate)="changeValidation($event)"
+            >
+        </trigger-time-daily>
+    </div>
+</div>

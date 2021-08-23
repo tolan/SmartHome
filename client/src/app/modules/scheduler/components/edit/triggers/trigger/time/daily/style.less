@@ -1,0 +1,25 @@
+.time {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+
+    .item {
+        display: flex;
+        border: 1px solid rgba(0, 0, 0, 0.13);
+        border-radius: 6px;
+        margin: 4px;
+        padding: 4px;
+
+        &:hover {
+            border-color: currentColor;
+        }
+    }
+
+    .add {
+        button {
+            height: calc(100% - 12px);
+            margin-top: 6px;
+        }
+    }
+
+}

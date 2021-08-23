@@ -1,14 +1,14 @@
-<phpunit bootstrap="./tests/Unit/bootstrap.php">
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./app/</directory>
-            <exclude>
-            </exclude>
-        </whitelist>
-    </filter>
-    <testsuites>
-        <testsuite name="SmartHome">
-            <directory suffix=".php">./tests/Unit/Tests/</directory>
-        </testsuite>
-    </testsuites>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./tests/Unit/bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./app/</directory>
+    </include>
+    <exclude/>
+  </coverage>
+  <testsuites>
+    <testsuite name="SmartHome">
+      <directory suffix=".php">tests/Unit/Tests/</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

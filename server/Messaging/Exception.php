@@ -3,7 +3,7 @@
 namespace SmartHome\Messaging;
 
 /**
- * This file defines class for ...
+ * This file defines exception class for messaging.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */

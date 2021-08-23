@@ -1,0 +1,16 @@
+<div class="triggers">
+    <div class="list">
+        <div class="item" *ngFor="let trigger of triggers; index as key">
+            <trigger
+                [trigger]="trigger"
+                (onChange)="changeTrigger($event, trigger)"
+                (onValidate)="changeTriggerValidation($event, key)"
+                (onRemove)="removeTrigger(trigger, key)"
+                >
+            </trigger>
+        </div>
+    </div>
+    <div class="button">
+        <add-menu [options]="triggerTypes" (onSelect)="addTrigger($event.id)" [type]=AddMenuType.CIRCLE></add-menu>
+    </div>
+</div>

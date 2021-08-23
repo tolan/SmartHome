@@ -1,0 +1,25 @@
+<div class="value">
+    <div class="item output">
+        <output-select
+            [output]="output"
+            [selected]="condition.value.output"
+            (onSelect)="changeOutput($event)"
+            (onValidate)="changeOutputValidation($event)"
+            >
+        </output-select>
+    </div>
+
+    <mat-form-field class="item type" appearance="outline">
+        <mat-label>Operátor</mat-label>
+        <mat-select (selectionChange)="changeOperator($event.value)" [value]="condition.value.operator">
+            <mat-option *ngFor="let type of TriggerValueConditionText" [value]="type[0]">{{type[1]}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.operator">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="item val" appearance="outline">
+        <mat-label>Hodnota</mat-label>
+        <input matInput [value]="condition.value.value" (input)="changeValue($event.target.value)">
+        <mat-hint *ngIf="!validation.value">* Vyžadováno</mat-hint>
+    </mat-form-field>
+</div>

@@ -32,10 +32,10 @@ export class SwitchComponent implements OnInit {
         const controlData = this.control.control.controlData || {};
         const delayData = controlData.delay || {};
         this.data = {
-            value: controlData.value,
+            value: controlData.value || false,
             delay: {
-                value: delayData.value,
-                unit: delayData.unit,
+                value: delayData.value || 0,
+                unit: delayData.unit || 'sec',
             }
         }
     }

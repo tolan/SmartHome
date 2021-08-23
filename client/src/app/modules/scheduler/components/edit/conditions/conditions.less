@@ -1,0 +1,36 @@
+@import "../../../../../mixins.less";
+
+.conditions {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+
+    .item {
+        width: calc(100% - 2px);
+        margin: 2px;
+        padding: 2px;
+        border: 1px dashed rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-wrap: nowrap;
+
+        .condition {
+            min-width: 320px;
+            flex: 1;
+            height: 100%;
+            border-right: 1px dotted rgba(0, 0, 0, 0.3);
+        }
+
+        &.error {
+            border-color: @warning-color;
+        }
+
+        .close {
+            width: 64px;
+        }
+    }
+
+    .flex-pad {
+        flex: 1;
+    }
+}

@@ -1,83 +1,88 @@
-import {Injectable} from '@angular/core';
+import {Injectable} from '@angular/core'
 
 interface CallbackInterface {
-    cb: (data: any) => void;
-    id: string;
+    cb: (data: any) => void
+    id: string
 }
 
-class Listeners {
+export class Listeners {
 
-    private data: any;
-    private callbacks: CallbackInterface[];
+    private data: any
+    private callbacks: CallbackInterface[]
 
     constructor() {
-        this.data = undefined;
-        this.callbacks = [];
+        this.data = undefined
+        this.callbacks = []
     }
 
     call(data: any) {
-        this.data = data;
-        this.callbacks.forEach((callback: CallbackInterface) => callback.cb(data));
+        this.data = data
+        this.callbacks.forEach((callback: CallbackInterface) => callback.cb(data))
     }
 
     subscribe(cb: (data: any) => void, id?: string) {
-        this.callbacks = [].concat(this.callbacks, {cb: cb, id: id});
+        this.callbacks = [].concat(this.callbacks, {cb: cb, id: id})
         if (this.data !== undefined) {
-            this.call(this.data);
+            this.call(this.data)
         }
 
-        return this;
+        return this
     }
 
     unsubscribe(cbOrId: string | ((data: any) => void)) {
         this.callbacks = this.callbacks.filter((callback: CallbackInterface) => {
-            return !(callback.cb === cbOrId || callback.id === cbOrId);
-        });
+            return !(callback.cb === cbOrId || callback.id === cbOrId)
+        })
 
-        return this;
+        return this
     }
 }
 
 export class Container {
 
-    static prefix: string = 'Container_';
+    static prefix: string = 'Container_'
 
     private listeners: {
         [key: string]: Listeners,
     }
 
     constructor() {
-        this.listeners = {};
+        this.listeners = {}
     }
 
     get(key: string) {
         if (!this.listeners[key]) {
-            this.listeners[key] = new Listeners();
+            this.listeners[key] = new Listeners()
 
             if (localStorage.getItem(this._getKey(key))) {
-                const data = JSON.parse(localStorage.getItem(this._getKey(key)));
-                this.listeners[key].call(data);
+                const data = JSON.parse(localStorage.getItem(this._getKey(key)))
+                this.listeners[key].call(data)
             }
         }
 
-        return this.listeners[key];
+        return this.listeners[key]
     }
 
     has(key: string) {
-        return !!this.listeners[key] || !!localStorage.getItem(this._getKey(key));
+        return !!this.listeners[key] || !!localStorage.getItem(this._getKey(key))
     }
 
     set(key: string, data: any, cached: boolean = false) {
-        this.get(key).call(data);
+        this.get(key).call(data)
         if (cached) {
-            localStorage.setItem(this._getKey(key), JSON.stringify(data));
+            localStorage.setItem(this._getKey(key), JSON.stringify(data))
         } else if (!cached && localStorage.getItem(this._getKey(key))) {
-            localStorage.removeItem(this._getKey(key));
+            localStorage.removeItem(this._getKey(key))
         }
     }
 
+    unset(key: string) {
+        localStorage.removeItem(this._getKey(key))
+        delete(this.listeners[key])
+    }
+
     private _getKey(key: string) {
-        return Container.prefix + key;
+        return Container.prefix + key
     }
 }
 
@@ -88,16 +93,16 @@ export class ContainerFactory {
 
     containers: {
         [key: string]: Container,
-    };
+    }
 
     constructor() {
-        this.containers = {};
+        this.containers = {}
     }
 
     getContainer(context: string): Container {
         if (!this.containers[context]) {
-            this.containers[context] = new Container();
+            this.containers[context] = new Container()
         }
-        return this.containers[context];
+        return this.containers[context]
     }
 }

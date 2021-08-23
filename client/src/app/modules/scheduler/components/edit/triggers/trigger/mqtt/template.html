@@ -1,0 +1,11 @@
+<div class="mqtt">
+    <mat-form-field class="topic" appearance="outline">
+        <mat-label>Topic</mat-label>
+        <input matInput [value]="value.topic" (input)="changeValue('topic', $event.target.value)">
+        <mat-hint *ngIf="!validation.topic">* Vyžadováno</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="path" appearance="outline" *ngIf="value.topic.length">
+        <mat-label>Cesta (json.path)</mat-label>
+        <input matInput [value]="value.path" (change)="changeValue('path', $event.target.value)">
+    </mat-form-field>
+</div>

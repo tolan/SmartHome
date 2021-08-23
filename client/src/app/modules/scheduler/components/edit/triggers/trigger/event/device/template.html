@@ -1,0 +1,25 @@
+<div class="device">
+    <mat-form-field appearance="outline" [ngClass]="!validation.room ? 'error' : ''">
+        <mat-label>Místnost</mat-label>
+        <mat-select (selectionChange)="changeRoom($event.value)" [value]="value.room" required>
+            <mat-option *ngFor="let room of rooms" [value]="room.room.id">{{room.room.name}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.room">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="value.room" [ngClass]="!validation.module ? 'error' : ''">
+        <mat-label>Zařízení</mat-label>
+        <mat-select (selectionChange)="changeDeviceModule($event.value)" [value]="value.module" required>
+            <mat-option *ngFor="let module of selectableModules" [value]="module.module.id">{{module.module.name}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.module">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="value.module" [ngClass]="!validation.action ? 'error' : ''">
+        <mat-label>Typ akce</mat-label>
+        <mat-select (selectionChange)="changeDeviceAction($event.value)" [value]="value.action" required>
+            <mat-option *ngFor="let action of selectableActions;" [value]="action.type">{{action.name}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.action">* Vyžadováno</mat-hint>
+    </mat-form-field>
+</div>

@@ -1,0 +1,57 @@
+<div class="conditions">
+    <div class="item" *ngFor="let condition of conditions; index as key" [ngClass]="!validation[key] ? 'error' : ''">
+        <div [ngSwitch]="condition.type" class="condition">
+            <orCondition
+                *ngSwitchCase="TriggerCondition.OR"
+                [condition]="condition"
+                [triggerType]="triggerType"
+                [output]="output"
+                (onChange)="changeCondition($event, condition)"
+                (onValidate)="changeValidation($event, key)"
+                >
+            </orCondition>
+            <pingCondition
+                *ngSwitchCase="TriggerCondition.PING"
+                [condition]="condition"
+                (onChange)="changeCondition($event, condition)"
+                (onValidate)="changeValidation($event, key)"
+                >
+            </pingCondition>
+            <timeCondition
+                *ngSwitchCase="TriggerCondition.TIME"
+                [condition]="condition"
+                (onChange)="changeCondition($event, condition)"
+                (onValidate)="changeValidation($event, key)"
+                >
+            </timeCondition>
+            <valueCondition
+                *ngSwitchCase="TriggerCondition.VALUE"
+                [condition]="condition"
+                [output]="output"
+                (onChange)="changeCondition($event, condition)"
+                (onValidate)="changeValidation($event, key)"
+                >
+            </valueCondition>
+            <lastRunCondition
+                *ngSwitchCase="TriggerCondition.LAST_RUN"
+                [condition]="condition"
+                (onChange)="changeCondition($event, condition)"
+                (onValidate)="changeValidation($event, key)"
+                >
+            </lastRunCondition>
+        </div>
+        <button class="close" mat-button *ngIf="conditions.length > 0" (click)="removeCondition(condition, key)">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="flex-pad"></div>
+    <div class="button">
+        <add-menu
+            [options]="TriggerConditionTypes"
+            (onSelect)="addCondition($event.id)"
+            [yPosition]="addMenuYPosition"
+            [type]=AddMenuType.CIRCLE
+            >
+        </add-menu>
+    </div>
+</div>

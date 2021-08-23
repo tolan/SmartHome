@@ -4,13 +4,17 @@
     .title {
         position: relative;
         top: 6px;
+        left: 55px;
         font-size: 18px;
         font-weight: 500;
         display: inline-block;
         cursor: pointer;
+        height: 50px;
+        line-height: 36px;
     }
 
     switch {
+        position: absolute;
         display: inline-block;
     }
 
@@ -21,11 +25,15 @@
         display: inline-block;
     }
 
+    .reset {
+        left: 55px;
+    }
+
     .toggle {
         float: right;
     }
 
-    pwm {
+    pwm, up-down {
         margin-left: 12px;
         display: inline-block;
         float: right;
@@ -34,7 +42,7 @@
 
 @media only screen and (max-width: 767px) {
     .header {
-        pwm {
+        pwm, up-down {
             float: none;
             display: block;
         }
@@ -42,7 +50,7 @@
 
     .open {
         .header {
-            pwm {
+            pwm, up-down {
                 float: none;
                 display: none;
             }
@@ -61,7 +69,7 @@
     }
 
     .header {
-        pwm {
+        pwm, up-down {
             opacity: 0;
             transition: opacity 0.25s linear;
         }
@@ -81,7 +89,7 @@
     }
 
     .header {
-        pwm {
+        pwm, up-down {
             transition: opacity 0.25s linear .25s;
         }
     }

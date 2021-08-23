@@ -1,0 +1,39 @@
+.container {
+    min-width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    min-height: 128px;
+    padding: 2px;
+
+    .element {
+        flex: 1;
+        margin-right: 6px;
+    }
+
+    .separator {
+        width: 64px;
+        text-align: center;
+        align-self: center;
+
+        button {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border: 1px dashed rgba(0, 0, 0, 0.5);
+            border-radius: 24px;
+            padding-left: 11px;
+            padding-bottom: 2px;
+        }
+
+    }
+
+    .close {
+        width: 64px;
+        align-self: top;
+
+        &.divider {
+            border-right: 1px dashed rgba(0, 0, 0, 0.25);
+        }
+    }
+
+}

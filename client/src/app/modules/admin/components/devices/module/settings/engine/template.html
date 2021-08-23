@@ -1,0 +1,61 @@
+<div class="settings" *ngIf="!isEditing">
+    <div class="blockDuration">
+        <span>Blokovací doba</span>
+        <span>{{module.module.settingsData.blockDuration}}</span>
+    </div>
+    <div class="pinUp">
+        <span>Pin +</span>
+        <span>{{module.module.settingsData.pinUp}}</span>
+    </div>
+    <div class="pinDown">
+        <span>Pin -</span>
+        <span>{{module.module.settingsData.pinDown}}</span>
+    </div>
+    <div class="pinUpBlock">
+        <span>Pin + (doraz)</span>
+        <span>{{module.module.settingsData.pinUpBlock}}</span>
+    </div>
+    <div class="pinDownBlock">
+        <span>Pin - (doraz)</span>
+        <span>{{module.module.settingsData.pinDownBlock}}</span>
+    </div>
+</div>
+
+<div class="settings editing" *ngIf="isEditing">
+    <form [formGroup]="moduleForm" class="name">
+        <mat-form-field>
+            <mat-label>Název modulu</mat-label>
+            <input matInput formControlName="name" (change)="changeModule()">
+        </mat-form-field>
+    </form>
+    <form [formGroup]="settingsForm">
+        <mat-form-field>
+            <mat-label>Blokovací doba</mat-label>
+            <input matInput formControlName="blockDuration" (change)="changeModule()">
+        </mat-form-field>
+    </form>
+    <form [formGroup]="settingsForm">
+        <mat-form-field>
+            <mat-label>Pin +</mat-label>
+            <input matInput formControlName="pinUp" (change)="changeModule()">
+        </mat-form-field>
+    </form>
+    <form [formGroup]="settingsForm">
+        <mat-form-field>
+            <mat-label>Pin -</mat-label>
+            <input matInput formControlName="pinDown" (change)="changeModule()">
+        </mat-form-field>
+    </form>
+    <form [formGroup]="settingsForm">
+        <mat-form-field>
+            <mat-label>Pin + (doraz)</mat-label>
+            <input matInput formControlName="pinUpBlock" (change)="changeModule()">
+        </mat-form-field>
+    </form>
+    <form [formGroup]="settingsForm">
+        <mat-form-field>
+            <mat-label>Pin - (doraz)</mat-label>
+            <input matInput formControlName="pinDownBlock" (change)="changeModule()">
+        </mat-form-field>
+    </form>
+</div>

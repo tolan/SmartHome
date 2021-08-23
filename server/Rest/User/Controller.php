@@ -96,7 +96,7 @@ class Controller {
     public function get(Request $request, Response $response) {
         $token = $request->getHeader('X-User-Login-Token');
 
-        if (!$this->_userService->getCurrentUser() && $token && $token[0]) {
+        if ($token && $token[0]) {
             $this->_userService->refreshLogin($token[0]);
         }
 

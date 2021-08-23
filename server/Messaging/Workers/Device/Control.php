@@ -6,6 +6,7 @@ use SmartHome\Messaging\Abstracts\AWorker;
 use SmartHome\Common\Utils\JSON;
 use SmartHome\Entity\{
     Timer,
+    Module,
     Control as ControlEntity
 };
 use SmartHome\Enum\{
@@ -21,6 +22,8 @@ use Exception;
 use DI\Container;
 use SmartHome\Common\Service;
 use SmartHome\Database\EntityQuery;
+use SmartHome\Scheduler\Trace;
+use SmartHome\Messaging\Workers\Device\Module\Abstracts\Builder;
 
 /**
  * This file defines class for control worker
@@ -80,12 +83,12 @@ class Control extends AWorker {
      */
     protected function receive(string $topic, string $message) {
         $data     = JSON::decode($message);
-        ['device' => $device, 'module' => $module, 'control' => $control] = $data;
+        ['device' => $device, 'module' => $module, 'control' => $control, 'traceId' => $traceId] = $data;
 
         $delay = ($control['controlData']) ? $control['controlData']['delay'] : null;
 
         if ($delay && $delay['value'] > 0) {
-            $this->_establishTimer($device, $module, $control);
+            $this->_establishTimer($device, $module, $control, ($traceId ?? Trace::getNewId()));
         } else {
             $this->_sendImediately($device, $module, $control);
         }
@@ -96,19 +99,28 @@ class Control extends AWorker {
      *
      * @param array $device  array with ip address
      * @param array $module  array with settings data (pin, resolution, channel)
-     * @param array $control array with id, type controlData (value)
+     * @param array $control array with id, type controlData (value, ?previous)
      *
      * @return void
      */
     private function _sendImediately($device, $module, $control) {
-        $client   = new Client();
-        $attempts = 3;
+        $client             = new Client();
+        $attempts           = 5;
+        $loggerInfoMessages = [];
 
         while ($attempts > 0) {
             try {
-                $query         = EntityQuery::create(ControlEntity::class, [], ['id' => $control['id']]);
-                $controlEntity = $this->_service->findOne($query); /* @var $controlEntity ControlEntity */
-                $controlData   = $controlEntity->getControlData();
+                $loggerInfoMessages[] = [
+                    'msg'     => 'Control init for device '.$device['id'].'.',
+                    'context' => [$device, $module, $control],
+                ];
+                $controlQuery         = EntityQuery::create(ControlEntity::class, [[Module::class]], ['id' => $control['id']]);
+                $controlEntity        = $this->_service->findOne($controlQuery); /* @var $controlEntity ControlEntity */
+                $moduleEntity         = $controlEntity->getModule(); /* @var $moduleEntity Module */
+
+                $builder = Builder::getBuilder($moduleEntity);
+
+                $controlData = $controlEntity->getControlData();
                 if ($controlEntity->getType() !== ControlType::FADE && $controlData['delay'] && $controlData['delay']['value'] > 0) {
                     $controlData['delay']['value'] = 0;
                     $controlEntity->setControlData($controlData);
@@ -116,32 +128,35 @@ class Control extends AWorker {
                     $this->_service->persist($controlEntity, true);
                 }
 
-                $address      = 'http://'.$device['ipAddress'].'/api';
-                $settingsData = $module['settingsData'];
-                $data         = [
-                    'action' => $control['type'],
-                    'data'   => [
-                        'pin'        => $settingsData['pin'],
-                        'resolution' => ($settingsData['resolution'] ?? 8),
-                        'channel'    => $settingsData['channel'],
-                        'value'      => $control['controlData']['value'],
-                    ],
-                ];
-                $options      = [
+                $address = 'http://'.$device['ipAddress'].'/api';
+                $data    = $builder->build($control);
+
+                $options = [
                     RequestOptions::FORM_PARAMS => [
-                        'data' => JSON::encode([
-                            $data,
-                        ]),
+                        'data' => JSON::encode([$data]),
                     ],
                 ];
 
-                $response = $client->post($address, $options);
-                $this->_logger->info('Control success: '.$response->getBody());
+                $loggerInfoMessages[] = [
+                    'msg'     => 'Control send to device '.$device['id'].'.',
+                    'context' => [],
+                ];
+                $response             = $client->post($address, $options);
+                $loggerInfoMessages[] = [
+                    'msg'     => 'Control success: '.$response->getBody(),
+                    'context' => $data,
+                ];
                 break;
             } catch (Exception $e) {
-                $this->_logger->error('Control error: '.$e->getMessage());
+                $this->_logger->warning('Control warning: '.$e->getMessage(), [$control]);
                 $attempts--;
+                // wait for 100ms
+                usleep(100 * 1000);
             }
+        }
+
+        foreach ($loggerInfoMessages as $message) {
+            $this->_logger->info($message['msg'], $message['context']);
         }
 
         if ($attempts === 0) {
@@ -152,13 +167,14 @@ class Control extends AWorker {
     /**
      * Establishes timer
      *
-     * @param array $device  Device data array
-     * @param array $module  Module data array
-     * @param array $control Control data array
+     * @param array  $device  Device data array
+     * @param array  $module  Module data array
+     * @param array  $control Control data array
+     * @param string $traceId Trace Id
      *
      * @return void
      */
-    private function _establishTimer($device, $module, $control) {
+    private function _establishTimer($device, $module, $control, $traceId) {
         $delay = $control['controlData']['delay'];
         unset($control['controlData']['delay']);
         $timer = new Timer();
@@ -168,6 +184,7 @@ class Control extends AWorker {
             'device'  => $device,
             'module'  => $module,
             'control' => $control,
+            'traceId' => $traceId,
         ]);
         $timer->setTimeout($delay['value'].$delay['unit']);
 

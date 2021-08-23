@@ -1,0 +1,27 @@
+@import "../../../../mixins.less";
+
+mat-list-item {
+    outline: 0;
+    display: flex;
+
+    .title {
+        .elipsis();
+    }
+
+    .title-new {
+        flex: 1;
+    }
+
+    mat-icon {
+        float: right;
+    }
+
+    &.active {
+        background-color: rgba(0,0,0,.08);
+    }
+
+    &:hover {
+        background-color: rgba(0,0,0,.04);
+        cursor: pointer;
+    }
+}

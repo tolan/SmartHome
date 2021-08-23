@@ -1,0 +1,34 @@
+<div class="time">
+    <div class="type">
+        <mat-form-field appearance="outline">
+            <mat-label>Opakování</mat-label>
+            <mat-select (selectionChange)="changeType($event.value)" [value]="value.type">
+                <mat-option *ngFor="let timeType of TriggerTimeTypeText" [value]="timeType[0]">{{timeType[1]}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="element" [ngSwitch]="value.type">
+        <trigger-time-daily
+            [value]="value.data"
+            *ngSwitchCase="TriggerTimeType.DAILY"
+            (onChange)="changeData($event)"
+            (onValidate)="changeValidation($event)"
+            >
+        </trigger-time-daily>
+        <trigger-time-weekly
+            [value]="value.data"
+            *ngSwitchCase="TriggerTimeType.WEEKLY"
+            (onChange)="changeData($event)"
+            (onValidate)="changeValidation($event)"
+            >
+        </trigger-time-weekly>
+        <trigger-time-monthly
+            [value]="value.data"
+            *ngSwitchCase="TriggerTimeType.MONTHLY"
+            (onChange)="changeData($event)"
+            (onValidate)="changeValidation($event)"
+            >
+        </trigger-time-monthly>
+    </div>
+</div>

@@ -8,6 +8,7 @@
             <div class="last-registration">Poslední registrace</div>
             <div class="firmware">Firmware</div>
             <div class="room">Místnost</div>
+            <div class="is-active">Aktivní</div>
         </div>
         <div class="right">
             <div class="id">{{device.device.id}}</div>
@@ -17,6 +18,7 @@
             <div class="last-registration">{{device.device.lastRegistration | date:'d.M.yyyy H:mm:ss':'Europe/Prague'}}</div>
             <div class="firmware">{{device.firmware ? device.firmware.name : 'Nenastaveno'}}</div>
             <div class="room">{{device.room ? device.room.name : 'Nenastaveno'}}</div>
+            <div class="is-active">{{device.device.isActive ? 'Ano' : 'Ne'}}</div>
         </div>
     </div>
     <mat-divider [vertical]="true"></mat-divider>
@@ -47,6 +49,7 @@
             <div class="last-registration">Poslední registrace</div>
             <div class="firmware">Firmware</div>
             <div class="room">Místnost</div>
+            <div class="is-active">Aktivní</div>
         </div>
         <div class="right">
             <div class="id">{{device.device.id}}</div>
@@ -82,6 +85,7 @@
                     </mat-form-field>
                 </form>
             </div>
+            <div class="is-active">{{device.device.isActive ? 'Ano' : 'Ne'}}</div>
         </div>
     </div>
     <mat-divider [vertical]="true"></mat-divider>
@@ -96,7 +100,7 @@
             </mat-tab>
         </mat-tab-group>
         <div class="actions">
-            <button mat-button (click)="addModule()"><mat-icon>add</mat-icon></button>
+            <add-menu [options]="ModuleTypes" (onSelect)="addModule($event.id)"></add-menu>
         </div>
     </div>
     <mat-divider [vertical]="true"></mat-divider>

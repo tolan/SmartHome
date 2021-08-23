@@ -42,9 +42,9 @@ class EntityQuery extends RelationQuery {
     public static function create(string $targetEntity, array $relations = [], array $conditions = []): EntityQuery {
         $query = new EntityQuery($targetEntity);
 
-        foreach ($relations as $set) {
+        foreach ((array)$relations as $set) {
             $rel = $query;
-            foreach ($set as $relation) {
+            foreach ((array)$set as $relation) {
                 $newRel = new RelationQuery($relation);
                 $rel->with($newRel);
                 $rel    = $newRel;

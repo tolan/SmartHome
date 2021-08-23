@@ -36,11 +36,11 @@ export class FadeComponent implements OnInit {
         const controlData = this.control.control.controlData || {};
         const delayData = controlData.delay || {};
         this.data = {
-            value: controlData.value,
-            running: controlData.running,
+            value: controlData.value || 0,
+            running: controlData.running || false,
             delay: {
-                value: delayData.value,
-                unit: delayData.unit,
+                value: delayData.value || 1,
+                unit: delayData.unit || 'min',
             }
         }
         this.max = Math.pow(2, this.module.module.settingsData.resolution || 8) - 1;

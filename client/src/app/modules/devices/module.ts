@@ -21,6 +21,7 @@ import {ModuleComponent} from './components/devices/module/module';
 import {FadeComponent} from './components/devices/module/control/fade/fade';
 import {PwmComponent} from './components/devices/module/control/pwm/pwm';
 import {SwitchComponent} from './components/devices/module/control/switch/switch';
+import {UpDownComponent} from './components/devices/module/control/up_down/component';
 
 @NgModule({
     imports: [
@@ -46,6 +47,7 @@ import {SwitchComponent} from './components/devices/module/control/switch/switch
         FadeComponent,
         PwmComponent,
         SwitchComponent,
+        UpDownComponent,
     ],
 })
 export class DevicesModule {}

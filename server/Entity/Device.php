@@ -62,6 +62,15 @@ class Device extends Entity implements JsonSerializable {
     protected $lastRegistration;
 
     /**
+     * Is active flag
+     *
+     * @var boolean
+     *
+     * @Column(type="boolean")
+     */
+    protected $isActive;
+
+    /**
      * Firmware
      *
      * @var Firmware
@@ -98,7 +107,7 @@ class Device extends Entity implements JsonSerializable {
     }
 
     /**
-     * Returns serialized data from JSON serialize.
+     * Returns data for JSON serialize.
      *
      * @return array
      */
@@ -109,6 +118,7 @@ class Device extends Entity implements JsonSerializable {
             'mac'              => $this->mac,
             'ipAddress'        => $this->ipAddress,
             'lastRegistration' => $this->lastRegistration,
+            'isActive'         => $this->isActive,
         ];
     }
 
@@ -202,6 +212,27 @@ class Device extends Entity implements JsonSerializable {
     public function setLastRegistration(DateTime $dateTime) {
         $this->lastRegistration = $dateTime;
 
+        return $this;
+    }
+
+    /**
+     * Gets is active
+     *
+     * @return bool
+     */
+    public function isActive(): bool {
+        return $this->isActive;
+    }
+
+    /**
+     * Sets is active
+     *
+     * @param bool $isActive is active flag
+     *
+     * @return $this
+     */
+    public function setIsActive(bool $isActive = true) {
+        $this->isActive = $isActive;
         return $this;
     }
 

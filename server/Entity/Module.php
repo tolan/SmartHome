@@ -33,6 +33,15 @@ class Module extends Entity implements JsonSerializable {
     protected $name;
 
     /**
+     * Type
+     *
+     * @var string
+     *
+     * @Column(type="string")
+     */
+    protected $type;
+
+    /**
      * Settings data
      *
      * @var string
@@ -68,7 +77,7 @@ class Module extends Entity implements JsonSerializable {
     }
 
     /**
-     * Returns serialized data from JSON serialize.
+     * Returns data for JSON serialize.
      *
      * @return array
      */
@@ -76,6 +85,7 @@ class Module extends Entity implements JsonSerializable {
         return [
             'id'           => $this->id,
             'name'         => $this->name,
+            'type'         => $this->type,
             'settingsData' => $this->settingsData,
         ];
     }
@@ -107,6 +117,27 @@ class Module extends Entity implements JsonSerializable {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * Gets type
+     *
+     * @return string
+     */
+    public function getType() {
+        return $this->type;
+    }
+
+    /**
+     * Sets type
+     *
+     * @param string $type Type
+     *
+     * @return $this
+     */
+    public function setType($type) {
+        $this->type = $type;
         return $this;
     }
 

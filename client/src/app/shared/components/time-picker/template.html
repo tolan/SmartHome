@@ -1,0 +1,58 @@
+<div class="picker">
+    <div class="element hours">
+        <div class="up">
+            <button mat-button (click)="hoursUp()">
+                <mat-icon>keyboard_arrow_up</mat-icon>
+            </button>
+        </div>
+        <div class="value">
+            <mat-form-field>
+                <input
+                    matInput
+                    inputmode="numeric"
+                    [value]="hours"
+                    type="number"
+                    min="0"
+                    max="23"
+                    (change)="hoursChange($event.target.value)"
+                    >
+            </mat-form-field>
+        </div>
+        <div class="down">
+            <button mat-button (click)="hoursDown()">
+                <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="element separator">
+        h
+    </div>
+    <div class="element minutes">
+        <div class="up">
+            <button mat-button (click)="minutesUp()">
+                <mat-icon>keyboard_arrow_up</mat-icon>
+            </button>
+        </div>
+        <div class="value">
+            <mat-form-field>
+                <input
+                    matInput
+                    inputmode="numeric"
+                    [value]="minutes"
+                    type="number"
+                    min="0"
+                    max="59"
+                    (change)="minutesChange($event.target.value)"
+                    >
+            </mat-form-field>
+        </div>
+        <div class="down">
+            <button mat-button (click)="minutesDown()">
+                <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="element separator">
+        m
+    </div>
+</div>

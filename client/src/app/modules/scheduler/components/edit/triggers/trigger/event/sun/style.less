@@ -1,0 +1,22 @@
+@import "../../../../../../../../mixins.less";
+
+.sun {
+    margin-left: -204px;
+
+    .error {
+        mat-hint {
+            color: @warning-color;
+        }
+    }
+
+    .types {
+        margin-left: 204px;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+
+        &>div {
+            margin: 6px;
+        }
+    }
+}

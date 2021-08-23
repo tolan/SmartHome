@@ -1,0 +1,85 @@
+<div class="device">
+    <mat-form-field class="room" appearance="outline" [ngClass]="!validation.room ? 'error' : ''">
+        <mat-label>Místnost</mat-label>
+        <mat-select (selectionChange)="changeRoom($event.value)" [value]="data.room">
+            <mat-option *ngFor="let room of rooms" [value]="room.room.id">{{room.room.name}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.room">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="module" appearance="outline" *ngIf="data.room" [ngClass]="!validation.module ? 'error' : ''">
+        <mat-label>Zařízení</mat-label>
+        <mat-select (selectionChange)="changeDeviceModule($event.value)" [value]="data.module">
+            <mat-option *ngFor="let module of selectableModules" [value]="module.module.id">{{module.module.name}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.module">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="action" appearance="outline" *ngIf="data.module" [ngClass]="!validation.action ? 'error' : ''">
+        <mat-label>Typ akce</mat-label>
+        <mat-select (selectionChange)="changeDeviceAction($event.value)" [value]="data.action">
+            <mat-option *ngFor="let action of selectableActions;" [value]="action.type">{{action.name}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!validation.action">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <div class="value" [ngSwitch]="data.action" *ngIf="data.action" [ngClass]="!validation.value ? 'error' : ''">
+        <div *ngSwitchCase="ControlType.SWITCH">
+            <mat-form-field appearance="outline">
+                <mat-label>Hodnota</mat-label>
+                <mat-select (selectionChange)="changeSwitch($event.value)" [value]="data.value">
+                    <mat-option [value]="true">Zapnout</mat-option>
+                    <mat-option [value]="false">Vypnout</mat-option>
+                    <mat-option *ngFor="let output of selectableOutput.defaults" [value]="'${' + output.key + '}'">{{'${' + output.key + '}'}}</mat-option>
+                    <mat-option *ngFor="let output of selectableOutput.custom" [value]="'${' + output.key + '}'">{{'${' + output.key + '}'}}</mat-option>
+                </mat-select>
+                <mat-hint *ngIf="!validation.value">* Vyžadováno</mat-hint>
+            </mat-form-field>
+        </div>
+        <div *ngSwitchCase="ControlType.PWM">
+            <mat-form-field appearance="outline">
+                <mat-label>Hodnota</mat-label>
+                <input matInput [value]="data.value" (input)="changeInput($event)" (blur)="changeInput($event)">
+                <mat-hint *ngIf="!validation.value">* Vyžadováno</mat-hint>
+            </mat-form-field>
+            <output-selector [output]="selectableOutput" (onSelect)="onOutputSelect($event)">
+            </output-selector>
+        </div>
+        <div *ngSwitchCase="ControlType.FADE">
+            <mat-form-field appearance="outline">
+                <mat-label>Hodnota</mat-label>
+                <input matInput [value]="data.value" (input)="changeInput($event)" (blur)="changeInput($event)">
+                <mat-hint *ngIf="!validation.value">* Vyžadováno</mat-hint>
+            </mat-form-field>
+            <div class="delay">
+                <span class="title">Doba trvání:</span>
+                <mat-slider
+                    min="1"
+                    max="90"
+                    step="1"
+                    thumbLabel="true"
+                    tickInterval="auto"
+                    [value]="data.delay"
+                    (change)="changeDelay($event.value)"
+                    >
+                </mat-slider>
+                <span class="value-title">{{data.delay + ' min'}}</span>
+            </div>
+            <output-selector [output]="selectableOutput" (onSelect)="onOutputSelect($event)">
+            </output-selector>
+        </div>
+        <div *ngSwitchCase="ControlType.UP_DOWN">
+            <mat-form-field appearance="outline">
+                <mat-label>Hodnota</mat-label>
+                <mat-select (selectionChange)="changeSwitch($event.value)" [value]="data.value">
+                    <mat-option [value]="UpDownType.UP">Nahoru</mat-option>
+                    <mat-option [value]="UpDownType.DOWN">Dolu</mat-option>
+                    <mat-option [value]="UpDownType.STOP">Stop</mat-option>
+                    <mat-option *ngFor="let output of selectableOutput.defaults" [value]="'${' + output.key + '}'">{{'${' + output.key + '}'}}</mat-option>
+                    <mat-option *ngFor="let output of selectableOutput.custom" [value]="'${' + output.key + '}'">{{'${' + output.key + '}'}}</mat-option>
+                </mat-select>
+                <mat-hint *ngIf="!validation.value">* Vyžadováno</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="http">
+    <div class="fields">
+        <div class="method">
+            <mat-label>Metoda</mat-label>
+            <mat-form-field appearance="outline">
+                <mat-select (selectionChange)="changeMethod($event.value)" [value]="data.method">
+                    <mat-option *ngFor="let method of ActionHTTPMethods | keyvalue: methodsSorter" [value]="method.key">{{method.value}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="uri" [ngClass]="!validation.uri ? 'error' : ''">
+            <mat-label>URI</mat-label>
+            <mat-form-field class="uri" appearance="outline">
+                <input matInput [value]="data.uri" (input)="changeUri($event)" (blur)="changeUri($event)">
+                <mat-hint *ngIf="!validation.uri">* Vyžadováno</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div class="params">
+            <mat-label>Parametry</mat-label>
+            <div class="param" *ngFor="let param of data.params; index as key">
+                <div class="fields">
+                    <mat-form-field class="key" appearance="outline">
+                        <mat-label>Název</mat-label>
+                        <input matInput [value]="param.key" (blur)="changeParamKey(param, $event)">
+                    </mat-form-field>
+                    <mat-form-field class="value" appearance="outline">
+                        <mat-label>Hodnota</mat-label>
+                        <input matInput [value]="param.value" (blur)="changeParamValue(param, $event)">
+                    </mat-form-field>
+                </div>
+                <button class="close" mat-button (click)="removeParam(param)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <button class="add" mat-button (click)="addParam()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+
+        <div class="body" *ngIf="[ActionHTTPMethods.POST, ActionHTTPMethods.PUT].includes(data.method)">
+            <mat-label>Tělo</mat-label>
+            <mat-form-field class="uri" appearance="outline">
+                <textarea matInput (blur)="changeBody($event)" [value]="data.body"></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <output-selector [output]="selectableOutput" (onSelect)="onOutputSelect($event)">
+    </output-selector>
+</div>

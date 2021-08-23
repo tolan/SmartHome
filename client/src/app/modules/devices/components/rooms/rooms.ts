@@ -1,17 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core'
 
-import {DeviceService} from '../../../../services/device';
+import {DeviceService} from '../../../../services/device'
 
-import {Room} from '../../../../interfaces/room';
+import {Room} from '../../../../interfaces/room'
 
 @Component({
     selector: 'rooms',
     templateUrl: './rooms.html',
     styleUrls: ['./rooms.less']
 })
-export class RoomsComponent implements OnInit {
+export class RoomsComponent implements OnInit, OnDestroy {
 
-    public rooms: Room[] = [];
+    public rooms: Room[] = []
 
     constructor(private deviceService: DeviceService) {
     }
@@ -21,10 +21,14 @@ export class RoomsComponent implements OnInit {
             this.rooms = Object.values(devices.reduce((acc: {[key: number]: any}, device: {room: {id: number}}) => {
                 const room = {
                     'room': device.room,
-                };
-                acc[device.room.id] = room;
+                }
+                acc[device.room.id] = room
                 return acc
             }, {}))
-        }, 'DevicesRoomsComponent');
+        }, 'DevicesRoomsComponent')
+    }
+
+    ngOnDestroy() {
+        this.deviceService.getControlled().unsubscribe('DevicesRoomsComponent')
     }
 }

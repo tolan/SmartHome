@@ -23,7 +23,7 @@ class Registration {
      * @return void
      */
     public static function sendRegistration(Device $device, MQTT $mqtt) {
-        $mqtt->publish(Topic::DEVICE_REGISTRATION, JSON::encode($device));
+        $mqtt->publish(Topic::DEVICE_REGISTRATION, JSON::encode($device), 0, 0, true);
     }
 
 }

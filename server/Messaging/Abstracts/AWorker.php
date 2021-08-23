@@ -9,6 +9,7 @@ use SmartHome\Common\{
     Service
 };
 use SmartHome\Enum\ProcessTaskState;
+use SmartHome\DI;
 use DI\Container;
 
 /**
@@ -25,18 +26,18 @@ abstract class AWorker implements IWorker {
     const ACTIVE_TIMEOUT = 30;
 
     /**
+     * Container instance
+     *
+     * @var DI\Container;
+     */
+    private $_container;
+
+    /**
      * MQTT client
      *
      * @var MQTT
      */
     private $_mqtt;
-
-    /**
-     * Common service
-     *
-     * @var Service
-     */
-    private $_service;
 
     /**
      * Worker ID
@@ -51,9 +52,9 @@ abstract class AWorker implements IWorker {
      * @param Container $container Container
      */
     public function __construct(Container $container) {
-        $this->_mqtt    = $container->get('mqtt');
-        $this->_service = $container->get(Service::class);
-        $this->_id      = $container->get('taskId');
+        $this->_container = $container;
+        $this->_mqtt      = $container->get('mqtt');
+        $this->_id        = $container->get('taskId');
         $this->prepare();
         $this->sendProcessState($this->_mqtt, ProcessTaskState::START, $this->_id);
     }
@@ -72,15 +73,16 @@ abstract class AWorker implements IWorker {
     /**
      * Publishes message to mqtt.
      *
-     * @param string $topic   Topic name
-     * @param string $content Message content
-     * @param int    $qos     QoS
-     * @param int    $retain  Retain
+     * @param string $topic         Topic name
+     * @param string $content       Message content
+     * @param int    $qos           QoS
+     * @param int    $retain        Retain
+     * @param bool   $isAllowedMeta Is allowed meta
      *
      * @return AWorker
      */
-    final protected function publish(string $topic, string $content, int $qos = 0, int $retain = 0): AWorker {
-        $this->_mqtt->publish($topic, $content, $qos, $retain);
+    final protected function publish(string $topic, string $content, int $qos = 0, int $retain = 0, bool $isAllowedMeta = false): AWorker {
+        $this->_mqtt->publish($topic, $content, $qos, $retain, $isAllowedMeta);
 
         return $this;
     }
@@ -106,7 +108,7 @@ abstract class AWorker implements IWorker {
             ];
         }
 
-        $this->_mqtt->subscribe($topics, $qos);
+        $this->_mqtt->subscribe($wrappedTopics, $qos);
     }
 
     /**
@@ -123,10 +125,12 @@ abstract class AWorker implements IWorker {
     /**
      * Receives message
      *
+     * @param boolean $loop Run in loop?
+     *
      * @return AWorker
      */
-    public function proc(): AWorker {
-        $this->_mqtt->proc();
+    public function proc($loop = true): AWorker {
+        $this->_mqtt->proc($loop);
         $this->process();
         $this->sendKeepAlive($this->_mqtt, $this->_id);
         return $this;
@@ -138,8 +142,15 @@ abstract class AWorker implements IWorker {
      * @return void
      */
     protected function process() {
-        $this->_service->flush();
-        $this->_service->clear();
+        if ($this->_container->isCreated(Service::class)) {
+            $this->_container->get(Service::class)->flush();
+            $this->_container->get(Service::class)->clear();
+        }
+
+        if ($this->_container->isCreated('mongo')) {
+            $this->_container->get('mongo')->flush();
+            $this->_container->get('mongo')->clear();
+        }
     }
 
     /**

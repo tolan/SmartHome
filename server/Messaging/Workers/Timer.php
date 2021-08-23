@@ -69,10 +69,10 @@ class Timer extends AWorker {
      * @return void
      */
     protected function process() {
-        $time = microtime(true);
+        $time = floor(microtime(true));
         if (($time - 1) >= $this->_lastTimestamp) {
-            $this->_lastTimestamp = floor($time);
-            $this->_container->call($this->_lastTimestamp);
+            $this->_lastTimestamp = $time;
+            $this->_container->call($time);
         }
     }
 

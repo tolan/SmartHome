@@ -178,8 +178,10 @@ class ControlMqtt extends AWorker {
 
                     $value = array_key_exists($value, $data) ? $data[$value] : $value;
                     if ($type === ControlType::SWITCH) {
+                        $controlData['previous'] = $controlData['value'];
                         $controlData['value'] = (bool)$value;
                     } else if ($type === ControlType::PWM) {
+                        $controlData['previous'] = $controlData['value'];
                         $controlData['value'] = (int)$value;
                     } else if ($type === ControlType::FADE) {
                         $controlData['value']   = (int)$value;
@@ -197,7 +199,7 @@ class ControlMqtt extends AWorker {
                     $this->_commonService->persist($target, true);
 
                     ControlHelper::syncControls($this->_commonService, $device, $module, $target);
-                    ControlHelper::sendControlUpdate($this->_mqtt, $device, $module, $target);
+                    ControlHelper::sendControlUpdate($this->_mqtt, $device, $module, $target, $data['traceId']);
                 },
             ];
         }

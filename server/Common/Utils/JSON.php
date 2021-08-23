@@ -2,6 +2,8 @@
 
 namespace SmartHome\Common\Utils;
 
+use Throwable;
+
 /**
  * This file defines class for work with JSON.
  *
@@ -34,6 +36,46 @@ class JSON {
      */
     public static function decode(string $json, bool $assoc = true, int $depth = 512, int $options = 0) {
         return json_decode($json, $assoc, $depth, $options);
+    }
+
+    /**
+     * Returns that the data are probably encoded.
+     *
+     * @param mixed $data Data
+     *
+     * @return bool
+     */
+    public static function isEncoded($data): bool {
+        $is = false;
+        try {
+            if (is_string($data)) {
+                self::decode($data);
+                $is = json_last_error() === JSON_ERROR_NONE;
+            }
+        } catch (Throwable $e) {
+            $is = false;
+        }
+
+        return $is;
+    }
+
+    /**
+     * Returns that the dare are probably decoded.
+     *
+     * @param mixed $data Data
+     *
+     * @return bool
+     */
+    public static function isDecoded($data): bool {
+        $is = false;
+        try {
+            self::encode($data);
+            $is = json_last_error() === JSON_ERROR_NONE;
+        } catch (Throwable $e) {
+            $is = false;
+        }
+
+        return $is;
     }
 
 }

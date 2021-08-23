@@ -13,3 +13,8 @@
 /client/proxy.conf.json
 /apache2
 /backup/
+/doctrine/
+/client/public/
+/public/
+/.phpunit.result.cache
+/docker-compose.yml

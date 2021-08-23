@@ -9,12 +9,18 @@ use SmartHome\Process\{
     Task,
     Exception
 };
-use SmartHome\Enum\Cache;
+use SmartHome\Enum\{
+    Cache,
+    Topic,
+};
 use SmartHome\Cache\Storage;
+use SmartHome\Messaging\Abstracts\AWorker;
 use Seld\Signal\SignalHandler;
 use Monolog\Logger;
 
 require_once __DIR__.'/bootstrap.php';
+
+const PROCESS_STATE_INTERVAL = 1000;
 
 /* @var $container DI\Container */
 
@@ -22,9 +28,11 @@ $logger = $container->get('logger'); /* @var $logger Logger */
 $mqtt   = $container->get('mqtt'); /* @var $mqtt MQTT */
 $cache  = $container->get('cache')->getCache(Cache::SCOPE_PROCESS); /* @var $cache Storage */
 
+gc_enable();
+
 $signal = SignalHandler::create([SignalHandler::SIGINT, SignalHandler::SIGTERM], $logger);
 
-$subscribers = Utils\Path::getClasses(__DIR__.'/server/Messaging/Workers');
+$subscribers = Utils\Path::getClasses(__DIR__.'/server/Messaging/Workers', AWorker::class);
 
 $taskContainer = new Container($logger);
 
@@ -48,8 +56,8 @@ foreach ($subscribers as $subscriber) {
     $taskContainer->addTask($task);
 }
 
-$previousState = [];
-while ($mqtt->proc() && $taskContainer->run(false)) {
+$lastProcessSent = null;
+while ($mqtt->proc(false) && $taskContainer->run(false)) {
     if ($signal->isTriggered()) {
         $logger->info('All processes will be stopped.');
         $taskContainer->stopAll();
@@ -57,21 +65,17 @@ while ($mqtt->proc() && $taskContainer->run(false)) {
         break;
     }
 
+    $time         = microtime(true) * 1000;
     $currentState = $taskContainer->getTasksInfo();
-    $isChanged    = false;
-    foreach ($currentState as $key => $state) {
-        if ($state !== $previousState[$key]) {
-            $isChanged = true;
-            break;
-        }
+    if ($time - $lastProcessSent > PROCESS_STATE_INTERVAL) {
+        $encoded = Utils\JSON::encode($currentState);
+        $mqtt->publish(Topic::PROCESS_INFO, $encoded);
+        $cache->set('statusInfo', $encoded);
+        $lastProcessSent = $time;
     }
 
-    if ($isChanged) {
-        $cache->set('statusInfo', Utils\JSON::encode($currentState));
-        $previousState = $currentState;
-    }
-
-    usleep(100 * 1000);
+    gc_collect_cycles();
+    usleep(MQTT_INTERVAL);
 }
 
 $mqtt->close();

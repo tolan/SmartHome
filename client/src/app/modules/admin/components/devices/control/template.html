@@ -1,0 +1,37 @@
+<div class="control" [ngSwitch]="control.control.type">
+    <device-row-module-control-fade
+        *ngSwitchCase="ControlType.FADE"
+        [control]="control"
+        [isEditing]="isEditing"
+        (onChange)="changeControl($event)"
+        >
+    </device-row-module-control-fade>
+    <device-row-module-control-mqtt
+        *ngSwitchCase="ControlType.MQTT"
+        [control]="control"
+        [isEditing]="isEditing"
+        (onChange)="changeControl($event)"
+        >
+    </device-row-module-control-mqtt>
+    <device-row-module-control-pwm
+        *ngSwitchCase="ControlType.PWM"
+        [control]="control"
+        [isEditing]="isEditing"
+        (onChange)="changeControl($event)"
+        >
+    </device-row-module-control-pwm>
+    <device-row-module-control-switch
+        *ngSwitchCase="ControlType.SWITCH"
+        [control]="control"
+        [isEditing]="isEditing"
+        (onChange)="changeControl($event)"
+        >
+    </device-row-module-control-switch>
+    <device-row-module-control-up-dowm
+        *ngSwitchCase="ControlType.UP_DOWN"
+        [control]="control"
+        [isEditing]="isEditing"
+        (onChange)="changeControl($event)"
+        >
+    </device-row-module-control-up-dowm>
+</div>

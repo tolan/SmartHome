@@ -1,0 +1,57 @@
+<div class="container" [ngClass]="dataValidation.isValid && conditionsValidation.isValid && outputValidation.isValid ? '' : 'error'">
+    <div class="trigger" [ngSwitch]="trigger.trigger.type">
+        <div class="title">Spouštěč</div>
+        <div class="element">
+            <trigger-event
+                [value]="trigger.trigger.data"
+                *ngSwitchCase="TriggerType.EVENT"
+                (onChange)="changeEventData($event)"
+                (onValidate)="changeEventValidation($event)"
+                (onMeta)="changeEventMeta($event)"
+                >
+            </trigger-event>
+            <trigger-time
+                          [value]="trigger.trigger.data"
+                          *ngSwitchCase="TriggerType.TIME"
+                          (onChange)="changeEventData($event)"
+                          (onValidate)="changeEventValidation($event)"
+                          (onMeta)="changeEventMeta($event)"
+                          >
+            </trigger-time>
+            <trigger-mqtt
+                          [value]="trigger.trigger.data"
+                          *ngSwitchCase="TriggerType.MQTT"
+                          (onChange)="changeEventData($event)"
+                          (onValidate)="changeEventValidation($event)"
+                          (onMeta)="changeEventMeta($event)"
+                          >
+            </trigger-mqtt>
+            <button class="close" mat-button (click)="removeTrigger()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="output" *ngIf="dataValidation && dataValidation.isValid">
+        <div class="title">Výstupní hodnoty</div>
+        <output-edit class="element"
+                 [output]="trigger.output"
+                 (onChange)="changeOutputData($event)"
+                 (onValidate)="changeOutputValidation($event)"
+                 >
+        </output-edit>
+    </div>
+
+    <div class="conditions" *ngIf="dataValidation && dataValidation.isValid">
+        <div class="title">Podmínky</div>
+        <conditions class="element"
+                    [conditions]="trigger.conditions"
+                    [output]="{defaults: trigger.output.defaults, custom: []}"
+                    [triggerType]="(trigger.meta || {}).valueType"
+                    (onChange)="changeConditionsData($event)"
+                    (onValidate)="changeConditionsValidation($event)"
+                    [addMenuYPosition]="'above'"
+                    >
+        </conditions>
+    </div>
+</div>

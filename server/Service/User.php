@@ -12,7 +12,6 @@ use SmartHome\Common\Utils\Password;
 use SmartHome\Database\EntityQuery;
 use SmartHome\Cache;
 use SmartHome\Enum;
-use SlimSession;
 use DI\Container;
 
 /**
@@ -39,7 +38,7 @@ class User {
     /**
      * Session
      *
-     * @var SlimSession\Helper
+     * @var Cache\Storage
      */
     private $_session;
 
@@ -60,7 +59,7 @@ class User {
      * @return array|null {user: UserEntity, groups: GroupEntity[], permissions: PermissionEntity[]}
      */
     public function getCurrentUser(): ?array {
-        return $this->_session->get('user');
+        return $this->_session->has('user') ? unserialize($this->_session->get('user')) : null;
     }
 
     /**
@@ -95,7 +94,7 @@ class User {
      * @return bool
      */
     public function logout(string $username): bool {
-        $user = $this->_session->get('user');
+        $user = $this->getCurrentUser();
         if ($user && $user['user']->getUsername() === $username) {
             $this->_cache->delete($user['user']->getToken());
             $this->_session->delete('user');
@@ -114,15 +113,24 @@ class User {
      */
     public function refreshLogin(string $token): bool {
         $userId = $this->_cache->get($token);
-        if ($userId) {
-            $query = EntityQuery::create(UserEntity::class, [[GroupEntity::class, PermissionEntity::class]], ['id' => $userId]);
-            $user  = $this->_service->findOne($query); /* @var $user UserEntity */
-            $user->setToken($token);
-            $this->_storeUser($user);
-            $this->_cache->set($token, $user->getId(), Enum\Cache::TTL_7_DAYS);
+        $user   = $this->getCurrentUser();
+        $result = false;
+
+        if (!$userId && $user) {
+            $this->_cache->set($token, $user['user']->getId(), Enum\Cache::TTL_7_DAYS);
+            $result = true;
+        } else if ($userId && !$user) {
+            $query      = EntityQuery::create(UserEntity::class, [[GroupEntity::class, PermissionEntity::class]], ['id' => $userId]);
+            $userEntity = $this->_service->findOne($query); /* @var $userEntity UserEntity */
+            $userEntity->setToken($token);
+            $this->_storeUser($userEntity);
+            $this->_cache->set($token, $userEntity->getId(), Enum\Cache::TTL_7_DAYS);
+            $result     = true;
+        } else if ($user && $userId) {
+            $result = true;
         }
 
-        return true;
+        return $result;
     }
 
     /**
@@ -164,7 +172,7 @@ class User {
             'groups'      => $user->getGroups()->toArray(),
             'permissions' => array_values($permissions),
         ];
-        $this->_session->set('user', $data);
+        $this->_session->set('user', serialize($data), Enum\Cache::TTL_7_DAYS);
 
         return $this;
     }

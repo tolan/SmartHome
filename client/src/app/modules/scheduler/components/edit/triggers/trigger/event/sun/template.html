@@ -1,0 +1,33 @@
+<div class="sun">
+    <div class="types">
+        <div class="type">
+            <mat-form-field appearance="outline" [ngClass]="!validation.type ? 'error' : ''">
+                <mat-label>Okamžik</mat-label>
+                <mat-select (selectionChange)="changeType($event.value)" [value]="value.type">
+                    <mat-option *ngFor="let type of TriggerEventSunTypeText" [value]="type[0]">{{type[1]}}</mat-option>
+                </mat-select>
+                <mat-hint *ngIf="!validation.type">* Vyžadováno</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div class="delayType">
+            <mat-form-field *ngIf="value.type" appearance="outline" [ngClass]="!validation.delayType ? 'error' : ''">
+                <mat-label>Spustit</mat-label>
+                <mat-select (selectionChange)="changeDelayType($event.value)" [value]="value.delayType">
+                    <mat-option *ngFor="let delayType of TriggerEventSunDelayText" [value]="delayType[0]">{{delayType[1]}}</mat-option>
+                </mat-select>
+                <mat-hint *ngIf="!validation.delayType">* Vyžadováno</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="delayTime" *ngIf="DelaysWithTimePicker.includes(value.delayType)">
+        <trigger-time-daily
+            [value]="value"
+            (onChange)="changeTimes($event)"
+            [default]="defaultTime"
+            (onValidate)="changeTimesValidation($event)"
+            >
+        </trigger-time-daily>
+    </div>
+</div>

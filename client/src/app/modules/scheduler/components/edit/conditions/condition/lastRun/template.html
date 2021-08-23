@@ -1,0 +1,12 @@
+<div class="last-run">
+    <mat-form-field appearance="outline">
+        <mat-label>Poslední spuštění bylo</mat-label>
+        <mat-select (selectionChange)="changeType($event.value)" [value]="condition.value.type">
+            <mat-option *ngFor="let type of TriggerLastRunCondtionText" [value]="type[0]">{{type[1]}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!isValid">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <time-picker [value]="condition.value.time" (onChange)="changeTime($event)">
+    </time-picker>
+</div>

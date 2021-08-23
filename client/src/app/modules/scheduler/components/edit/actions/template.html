@@ -1,0 +1,25 @@
+<div class="actions">
+    <div class="list">
+        <div class="item" *ngFor="let action of actions; index as key; last as last" [ngClass]="validation[key] ? '' : 'error'">
+            <div class="move-actions">
+                <button mat-button [disabled]="key === 0" (click)="upAction(key)">
+                    <mat-icon>keyboard_arrow_up</mat-icon>
+                </button>
+                <button mat-button [disabled]="last" (click)="downAction(key)">
+                    <mat-icon>keyboard_arrow_down</mat-icon>
+                </button>
+            </div>
+            <action
+                [action]="action"
+                [triggers]="triggers"
+                (onChange)="changeAction($event, key)"
+                (onRemove)="removeAction(action, key)"
+                (onValidate)="changeActionValidation($event, key)"
+                >
+            </action>
+        </div>
+    </div>
+    <div class="button">
+        <add-menu [options]="ActionTypes" (onSelect)="addAction($event.id)" [type]=AddMenuType.CIRCLE></add-menu>
+    </div>
+</div>

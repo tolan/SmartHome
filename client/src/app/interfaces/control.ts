@@ -1,8 +1,7 @@
 export interface Control {
     control: {
-        id: number;
+        id?: number;
         type: string;
         controlData: any;
     },
-    module?: any;
 }

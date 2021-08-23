@@ -1,0 +1,10 @@
+<mat-list>
+    <mat-list-item *ngFor="let task of tasks" [routerLink]="['task', task.task.id]" routerLinkActive="active">
+        <span class="title" matTooltip="{{task.task.name}}">{{task.task.name}}</span>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+    <mat-list-item [routerLink]="['task', 'new']" routerLinkActive="active">
+        <span class="title-new">Nový plán</span>
+        <mat-icon>add</mat-icon>
+    </mat-list-item>
+</mat-list>

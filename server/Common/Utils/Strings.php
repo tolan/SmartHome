@@ -31,4 +31,15 @@ class Strings {
         return ucfirst(str_replace('_', ' ', $string));
     }
 
+    /**
+     * Converts from camel case to underscore
+     *
+     * @param string $string String in camel case format
+     *
+     * @return string
+     */
+    public static function fromCamelCaseToUnderscore($string) {
+        return join('_', preg_split('/(?=[A-Z])/', $string));
+    }
+
 }

@@ -1,38 +1,38 @@
-import {Container} from './container';
-import { Injectable } from "@angular/core";
+import {Container} from './container'
+import {Injectable} from "@angular/core"
 
 @Injectable()
 export class Mediator {
 
-    private container: Container;
+    private container: Container
 
     constructor() {
-        this.container = new Container();
+        this.container = new Container()
     }
 
     emit(keys: string | string[], data: any) {
-        keys = [].concat(keys);
-        keys.forEach((key) => this.container.set(key, data));
+        keys = [].concat(keys)
+        keys.forEach((key) => this.container.set(key, data))
     }
 
     on(keys: string | string[], cb: (data: any) => void) {
-        keys = [].concat(keys);
-        keys.forEach((key) => this.container.get(key).subscribe(cb));
+        keys = [].concat(keys)
+        keys.forEach((key) => this.container.get(key).subscribe(cb))
     }
 }
 
-export const buildKeys = function (group: string, actions?: string[]|string): string[] {
+export const buildKeys = function (group: string, actions?: string[] | string): string[] {
     if (!actions) {
         actions = [
             EventAction.create,
             EventAction.update,
-            EventAction.remove
-        ];
+            EventAction.remove,
+        ]
     } else {
-        actions = [].concat(actions);
+        actions = [].concat(actions)
     }
 
-    return actions.map((action) => group + ':' + action);
+    return actions.map((action) => group + ':' + action)
 }
 
 export enum EventGroup {
@@ -43,6 +43,7 @@ export enum EventGroup {
     ROOM = 'room',
     USER = 'user',
     USERS = 'users',
+    TASK = 'task',
 }
 
 export enum EventAction {

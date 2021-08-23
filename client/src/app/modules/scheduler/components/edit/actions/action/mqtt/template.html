@@ -1,0 +1,17 @@
+<div class="action">
+    <div class="fields">
+        <mat-form-field class="topic" appearance="outline" [ngClass]="!validation.topic ? 'error' : ''">
+            <mat-label>Topic</mat-label>
+            <input matInput [value]="data.topic" (input)="changeTopic($event)" (blur)="changeTopic($event)">
+            <mat-hint *ngIf="!validation.topic">* Vyžadováno</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="message" appearance="outline">
+            <mat-label>Zpráva</mat-label>
+            <input matInput [value]="data.message" (blur)="changeMessage($event)">
+        </mat-form-field>
+    </div>
+
+    <output-selector [output]="selectableOutput" (onSelect)="onOutputSelect($event)">
+    </output-selector>
+</div>

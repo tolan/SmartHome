@@ -3,7 +3,7 @@
 namespace SmartHome\Common;
 
 /**
- * This file defines class for ...
+ * This file defines common exception class.
  *
  * @author Martin Kovar <mkovar86@gmail.com>
  */

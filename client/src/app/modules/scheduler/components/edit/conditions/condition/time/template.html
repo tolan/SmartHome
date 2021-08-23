@@ -1,0 +1,12 @@
+<div class="time">
+    <mat-form-field appearance="outline">
+        <mat-label>Čas spuštění</mat-label>
+        <mat-select (selectionChange)="changeWhen($event.value)" [value]="condition.value.when">
+            <mat-option *ngFor="let when of TriggerTimeCondtionText" [value]="when[0]">{{when[1]}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!isValid">* Vyžadováno</mat-hint>
+    </mat-form-field>
+
+    <time-picker [value]="condition.value.time" (onChange)="changeTime($event)">
+    </time-picker>
+</div>

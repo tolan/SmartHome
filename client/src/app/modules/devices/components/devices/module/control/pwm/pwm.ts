@@ -44,7 +44,7 @@ export class PwmComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.data.value = this.control.control.controlData.value;
+        this.data.value = this.control.control.controlData.value || 0;
         this.max = Math.pow(2, this.module.module.settingsData.resolution || 8) - 1;
 
         this.controlForm = this.formBuilder.group({

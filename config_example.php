@@ -9,6 +9,13 @@ return [
         'dbname' => 'SmartHome',
         'charset' => 'UTF8',
     ],
+    'mongo'       => [
+        'host'     => 'localhost',
+        'port'     => 27017,
+        'user'     => 'SmartHome',
+        'password' => 'password',
+        'dbname'   => 'SmartHome',
+    ],
     'mqtt' => [
         'server' => 'localhost',
         'port' => 1883,
@@ -25,4 +32,19 @@ return [
         'host' => 'localhost',
         'password' => 'password',
     ],
+    'socket'      => [
+        'allowed_origins' => [
+            'localhost',
+        ],
+        'requests_per_minute' => 10,
+        'connections_per_ip'  => 2,
+    ],
+    'elk'         => [
+        'host' => 'localhost',
+        'port' => 9200,
+    ],
+    'coordinates' => [
+        'latitude'  => 0.0,
+        'longitude' => 0.0,
+    ]
 ];

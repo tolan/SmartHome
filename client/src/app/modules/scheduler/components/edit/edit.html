@@ -1,0 +1,94 @@
+<div class="task" *ngIf="task">
+    <div class="header">
+        <div class="name">
+            <mat-form-field appearance="outline">
+                <mat-label>Název</mat-label>
+                <input matInput [value]="task.task.name" (input)="changeName($event.target.value)">
+                <mat-hint *ngIf="!validation.name">* Vyžadováno</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div class="toggles">
+            <div class="delete" *ngIf="task.task.id">
+                <button mat-icon-button [matMenuTriggerFor]="deleteMenu">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <mat-menu #deleteMenu="matMenu">
+                    <div class="delete-title">
+                        Opravdu se má smazat úkol {{task.task.name}}?
+                    </div>
+                    <button mat-menu-item (click)="onDelete()">
+                        <mat-icon>done</mat-icon>
+                        <span>Ano</span>
+                    </button>
+                    <button mat-menu-item>
+                        <mat-icon>close</mat-icon>
+                        <span>Ne</span>
+                    </button>
+                </mat-menu>
+            </div>
+
+            <div class="enabled">
+                <mat-checkbox class="value" [checked]="task.task.enabled" (change)="changeEnabled()" [labelPosition]="'before'">
+                    Aktivní
+                </mat-checkbox>
+            </div>
+
+            <div class="share">
+                <mat-checkbox class="value" [checked]="task.task.share" (change)="changeShare()" [labelPosition]="'before'">
+                    Sdílet
+                </mat-checkbox>
+            </div>
+        </div>
+    </div>
+
+    <mat-tab-group>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span [ngClass]="!validation.triggers ? 'error' : ''">Spouštěče</span>
+            </ng-template>
+            <triggers
+                [triggers]="task.triggers"
+                (onChange)="changeTriggers($event)"
+                (onValidate)="changeTriggersValidation($event)"
+                >
+            </triggers>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span [ngClass]="!validation.conditions ? 'error' : ''">Obecné podmínky</span>
+            </ng-template>
+            <conditions
+                [conditions]="task.conditions"
+                [triggerType]="TriggerMetaType.GENERAL"
+                [output]="getOutput()"
+                (onChange)="changeConditions($event)"
+                (onValidate)="changeConditionsValidation($event)"
+                >
+            </conditions>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span [ngClass]="!validation.actions ? 'error' : ''">Akce</span>
+            </ng-template>
+            <actions
+                [actions]="task.actions"
+                [triggers]="task.triggers"
+                (onChange)="changeActions($event)"
+                (onValidate)="changeActionsValidation($event)"
+                >
+            </actions>
+        </mat-tab>
+        <mat-tab *ngIf="task.task.id">
+            <ng-template mat-tab-label>
+                <span>Protokol</span>
+            </ng-template>
+            <logs [task]="task">
+            </logs>
+        </mat-tab>
+    </mat-tab-group>
+
+    <div class="footer">
+        <button mat-flat-button (click)="onSave()" [disabled]="!isValid()" color="primary">Uložit</button>
+    </div>
+</div>

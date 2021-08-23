@@ -1,0 +1,14 @@
+<div class="time">
+    <div class="item" *ngFor="let time of value.times">
+        <time-picker [value]="time" (onChange)="changeTime($event, time)">
+        </time-picker>
+        <button mat-button (click)="removeTime(time)" *ngIf="value.times.length > 1">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="add">
+        <button mat-button (click)="addTime()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</div>

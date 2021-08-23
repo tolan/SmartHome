@@ -1,0 +1,19 @@
+<div class="weekly">
+    <ng-container *ngFor="let day of Days last as last">
+        <div class="day">
+            <div class="title">
+                <mat-checkbox [checked]="value[day[0]]" (change)="toggleDay(day[0])">{{day[1]}}</mat-checkbox>
+            </div>
+            <div class="times" *ngIf="value[day[0]]">
+                <trigger-time-daily
+                    [value]="value[day[0]]"
+                    (onChange)="changeDayValue(day[0], $event)"
+                    (onValidate)="changeValidation($event)"
+                    >
+                </trigger-time-daily>
+            </div>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+    </ng-container>
+    <mat-hint *ngIf="!isValid">* Musí být vybrán aspoň jeden den</mat-hint>
+</div>

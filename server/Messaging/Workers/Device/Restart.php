@@ -17,6 +17,8 @@ use DI\Container;
  */
 class Restart extends AWorker {
 
+    const ACTIVE_TIMEOUT = 60;
+
     /**
      * Logger instance
      *

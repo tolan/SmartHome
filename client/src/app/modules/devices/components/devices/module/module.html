@@ -24,10 +24,10 @@
                 <mat-icon *ngIf="opened">keyboard_arrow_up</mat-icon>
             </button>
         </div>
-        <ng-container *ngFor="let control of controls" >
+        <ng-container *ngFor="let control of controls" [ngSwitch]="control.control.type" >
             <pwm
                 class="control"
-                *ngIf="control.control.type === ControlType.PWM"
+                *ngSwitchCase="ControlType.PWM"
                 [simple]="true"
                 [control]="control"
                 [module]="module"
@@ -35,6 +35,15 @@
                 (onEdit)="onControlEdit($event)"
                 >
             </pwm>
+            <up-down
+                class="control"
+                *ngSwitchCase="ControlType.UP_DOWN"
+                [simple]="true"
+                [control]="control"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                >
+            </up-down>
         </ng-container >
     </div>
     <div class="content">
@@ -50,7 +59,7 @@
             </fade>
             <pwm
                 class="control"
-                *ngIf="control.control.type === ControlType.PWM"
+                *ngSwitchCase="ControlType.PWM"
                 [control]="control"
                 [module]="module"
                 (onChange)="onControlChange($event)"
@@ -65,6 +74,14 @@
                 (onEdit)="onControlEdit($event)"
                 >
             </switch>
+            <up-down
+                class="control"
+                *ngSwitchCase="ControlType.UP_DOWN"
+                [control]="control"
+                (onChange)="onControlChange($event)"
+                (onEdit)="onControlEdit($event)"
+                >
+            </up-down>
         </ng-container>
     </div>
 </mat-card>

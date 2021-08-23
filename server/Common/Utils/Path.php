@@ -12,20 +12,24 @@ class Path {
     /**
      * Returns classes in path and subdirectories
      *
-     * @param string $path Path
+     * @param string $path        Path
+     * @param string $parentClass (optional) Parent classname
      *
      * @return array
      */
-    public static function getClasses(string $path): array {
+    public static function getClasses(string $path, string $parentClass): array {
         $path   = rtrim($path, '/');
         $result = [];
 
         foreach (glob($path.'/*') as $filename) {
             if (is_dir($filename)) {
-                $result = array_merge($result, self::getClasses($filename));
+                $result = array_merge($result, self::getClasses($filename, $parentClass));
             } else {
                 $filename = ltrim(rtrim($filename, '.php'), __DIR__.'/src/');
-                $result[] = '\\SmartHome\\'.str_replace('/', '\\', $filename);
+                $class = '\\SmartHome\\'.str_replace('/', '\\', $filename);
+                if (!$parentClass || is_subclass_of($class, $parentClass)) {
+                    $result[] = $class;
+                }
             }
         }
 

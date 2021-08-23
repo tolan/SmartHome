@@ -1,0 +1,14 @@
+<div class="up-down">
+    <div class="title" *ngIf="!simple">
+        Směr posunu:
+    </div>
+    <button class="up" mat-button (click)="up()">
+        <mat-icon>vertical_align_top</mat-icon>
+    </button>
+    <button class="up" mat-button (click)="stop()">
+        <mat-icon>vertical_align_center</mat-icon>
+    </button>
+    <button class="down" mat-button (click)="down()">
+        <mat-icon>vertical_align_bottom</mat-icon>
+    </button>
+</div>

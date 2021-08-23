@@ -74,6 +74,8 @@ class Container {
                         'and exit code: '.$task->getProcess()->getExitCode()
                     ];
                     $this->_logger->error(join(' ', $message));
+                    $task->stop()->start();
+                    continue;
                 }
 
                 try {

@@ -1,0 +1,9 @@
+<div class="select">
+    <mat-form-field appearance="outline">
+        <mat-label>Hodnota</mat-label>
+        <mat-select (selectionChange)="onClick($event.value)" [value]="selected" [disabled]="selectable.length === 1">
+            <mat-option *ngFor="let out of selectable" [value]="out.key">{{out.key}}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!isValid">* Vyžadováno</mat-hint>
+    </mat-form-field>
+</div>

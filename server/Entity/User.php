@@ -75,7 +75,7 @@ class User extends Entity implements JsonSerializable {
     }
 
     /**
-     * Returns serialized data from JSON serialize.
+     * Returns data for JSON serialize.
      *
      * @return array
      */

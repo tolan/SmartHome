@@ -1,0 +1,26 @@
+@import "../../../../../../../mixins.less";
+
+.value {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding-left: 6px;
+    padding-right: 6px;
+
+    .item {
+        margin: 6px;
+    }
+
+    .type {
+        width: 150px;
+    }
+
+    .val {
+        flex: 1;
+    }
+
+    mat-hint {
+        color: @warning-color;
+    }
+
+}

@@ -5,6 +5,7 @@ export interface Device {
         mac: string;
         ipAddress: string;
         lastRegistration: string;
+        isActive: boolean;
     },
     firmware?: any;
     room?: any;

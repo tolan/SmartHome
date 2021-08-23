@@ -1,0 +1,8 @@
+<div class="menu" [ngClass]="type">
+    <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon>add</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" [xPosition]="xPosition" [yPosition]="yPosition">
+        <button *ngFor="let option of options" mat-menu-item (click)="select(option)">{{option.title}}</button>
+    </mat-menu>
+</div>

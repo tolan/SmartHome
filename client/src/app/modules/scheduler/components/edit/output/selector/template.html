@@ -1,0 +1,5 @@
+<div class="selector">
+    <div class="item" *ngFor="let item of selectable">
+        <button mat-stroked-button  (click)="onClick(item)">{{'${' + item + '}'}}</button>
+    </div>
+</div>

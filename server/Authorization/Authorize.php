@@ -7,7 +7,7 @@ use SmartHome\Entity\{
     Permission,
     User
 };
-use SlimSession\Helper as SessionHelper;
+use SmartHome\Cache\Storage;
 use Slim\Http\ServerRequest as Request;
 use SmartHome\Common\Service;
 use SmartHome\Database\EntityQuery;
@@ -45,9 +45,9 @@ class Authorize {
      * @throws Exception
      */
     public function isUserLoggedIn(Request $request): Authorize {
-        $session = $this->_container->get('session'); /* @var $session SessionHelper */
+        $session = $this->_container->get('session'); /* @var $session Storage */
 
-        if (!$session->exists('user')) {
+        if (!$session->has('user')) {
             throw new Exception($request, 'User is not logged in.');
         }
 
@@ -68,8 +68,8 @@ class Authorize {
     public function checkPermissions(Request $request, array $permissions, bool $all = true): Authorize {
         $this->isUserLoggedIn($request);
 
-        $session         = $this->_container->get('session'); /* @var $session SessionHelper */
-        $user            = $session->get('user');
+        $session         = $this->_container->get('session'); /* @var $session Storage */
+        $user            = unserialize($session->get('user'));
         $userPermissions = array_map(function(Permission $permission) {
             return $permission->getType();
         }, $user['permissions']);

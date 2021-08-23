@@ -1,0 +1,23 @@
+<div class="container">
+    <ng-container *ngFor="let conditions of condition.value; last as last; index as key" >
+        <conditions
+            class="element"
+            [conditions]="conditions"
+            [triggerType]="triggerType"
+            [output]="output"
+            [allowEmpty]="false"
+            (onChange)="changeConditions($event, conditions)"
+            (onValidate)="changeValidations($event, key)"
+            >
+        </conditions>
+        <button class="close" [ngClass]="last ? '' : 'divider'" mat-button *ngIf="condition.value.length > 2" (click)="removeConditions(conditions, key)">
+            <mat-icon>close</mat-icon>
+        </button>
+        <div *ngIf="!last" class="separator">
+            <div>Nebo</div>
+            <button mat-button (click)="addConditions()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </ng-container>
+</div>

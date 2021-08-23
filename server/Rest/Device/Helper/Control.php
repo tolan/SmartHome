@@ -19,6 +19,7 @@ use SmartHome\Entity\{
     Control as ControlEntity,
     Timer
 };
+use SmartHome\Scheduler\Trace;
 
 /**
  * This file defines class for control device helper
@@ -34,14 +35,16 @@ class Control {
      * @param Device        $device  Device
      * @param Module        $module  Module
      * @param ControlEntity $control Control
+     * @param string        $traceId TraceId
      *
      * @return void
      */
-    public static function sendControlUpdate(MQTT $mqtt, Device $device, Module $module = null, ControlEntity $control = null) {
+    public static function sendControlUpdate(MQTT $mqtt, Device $device, Module $module = null, ControlEntity $control = null, string $traceId = null) {
         $data = [
             'device'  => $device,
             'module'  => $module,
             'control' => $control,
+            'traceId' => ($traceId ?? Trace::getNewId()),
         ];
 
         if ($control->getType() === ControlType::FADE) {
@@ -58,9 +61,9 @@ class Control {
 
             $mqtt->publish(Topic::TIMER_START, JSON::encode($timer));
         } else if ($control->getType() === ControlType::MQTT) {
-            $mqtt->publish(Topic::DEVICE_CONTROL_MQTT, JSON::encode($data));
+            $mqtt->publish(Topic::DEVICE_CONTROL_MQTT, JSON::encode($data), 0, 0, true);
         } else {
-            $mqtt->publish(Topic::DEVICE_CONTROL, JSON::encode($data));
+            $mqtt->publish(Topic::DEVICE_CONTROL, JSON::encode($data), 0, 0, true);
         }
     }
 
@@ -178,7 +181,7 @@ class Control {
             }
         }
 
-        $mqtt->publish(Topic::DEVICE_CONTROL_REMOTE.'/'.$moduleId.'/'.$type, JSON::encode(['value' => $value, 'data' => $data]));
+        $mqtt->publish(Topic::DEVICE_CONTROL_REMOTE.'/'.$moduleId.'/'.$type, JSON::encode(['value' => $value, 'data' => $data]), 0, 0, true);
     }
 
 }

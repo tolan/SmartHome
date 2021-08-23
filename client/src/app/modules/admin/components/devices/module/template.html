@@ -1,0 +1,26 @@
+<div class="module" [ngClass]="isEditing ? 'editing' : ''">
+    <div class="info" [ngSwitch]="module.module.type">
+        <device-row-module-engine
+            *ngSwitchCase="ModuleType.ENGINE"
+            [module]="module"
+            [isEditing]="isEditing"
+            (onChange)="changeModule($event)"
+            >
+        </device-row-module-engine>
+        <device-row-module-light
+            *ngSwitchCase="ModuleType.LIGHT"
+            [module]="module"
+            [isEditing]="isEditing"
+            (onChange)="changeModule($event)"
+            >
+        </device-row-module-light>
+    </div>
+
+    <device-row-module-control
+        *ngFor="let type of availableControlTypes"
+        [control]="getControlData(type)"
+        (onChange)="changeControl($event)"
+        [isEditing]="isEditing"
+        >
+    </device-row-module-control>
+</div>

@@ -12,8 +12,10 @@ interface IWorker {
     /**
      * Receives message
      *
+     * @param boolean $loop Run in loop?
+     *
      * @return void
      */
-    public function proc();
+    public function proc($loop = true);
 
 }

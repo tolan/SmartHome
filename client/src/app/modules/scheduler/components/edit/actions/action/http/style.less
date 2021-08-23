@@ -1,0 +1,52 @@
+@import "../../../../../../../mixins.less";
+
+.http {
+    margin: 6px;
+
+    .fields {
+
+        mat-label {
+            display: inline-block;
+            width: 120px;
+            cursor: default;
+        }
+
+        .error {
+            mat-hint {
+                color: @warning-color;
+            }
+        }
+
+        .params {
+            height: 188.5px;
+            display: flex;
+            align-items: center;
+
+            .param {
+                display: flex;
+
+                .fields {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+
+            .add {
+                height: 100%;
+            }
+        }
+
+        .body {
+            display: flex;
+            align-items: center;
+
+            mat-form-field {
+                flex: 1;
+
+                textarea {
+                    height: 200px;
+                }
+            }
+        }
+    }
+}

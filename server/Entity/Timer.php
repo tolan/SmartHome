@@ -105,7 +105,7 @@ class Timer extends Entity implements JsonSerializable {
     }
 
     /**
-     * Returns serialized data from JSON serialize.
+     * Returns data for JSON serialize.
      *
      * @return array
      *
@@ -218,7 +218,7 @@ class Timer extends Entity implements JsonSerializable {
      * @return DateTime
      */
     public function getCreated() {
-        return $this->created;
+        return new DateTime($this->created);
     }
 
     /**

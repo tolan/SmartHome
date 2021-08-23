@@ -2,6 +2,7 @@
 
 namespace SmartHome\Timer;
 
+use DateTimeZone;
 use SmartHome\Entity\Timer;
 use SmartHome\Common\MQTT;
 use SmartHome\Common\Utils\{
@@ -66,9 +67,10 @@ class Container {
      */
     public function call($microtime) {
         foreach ($this->_timers as $key => $timer) {
-            $lastRun = (($timer->getLastRun()) ?? $timer->getCreated());
+            $lastRun = (($timer->getLastRun()) ?? $timer->getCreated()); /* @var $lastRun \SmartHome\Common\Utils\DateTime */
+            $offset  = (new DateTimeZone(date_default_timezone_get()))->getOffset($lastRun);
 
-            if (strtotime($lastRun.' +'.$timer->getTimeout()) < $microtime) {
+            if ((strtotime($lastRun.' +'.$timer->getTimeout()) - $offset) <= $microtime) {
                 $this->_mqtt->publish($timer->getTargetTopic(), JSON::encode($timer->getContent()));
 
                 if (!$timer->isRepeated()) {
@@ -129,7 +131,7 @@ class Container {
 
         if ($existed) {
             $existed->setContent($timer->getContent());
-            $existed->setCreated(new DateTime($timer->getCreated()));
+            $existed->setCreated($timer->getCreated());
             $existed->setRepeated($timer->isRepeated());
             $existed->setTimeout($timer->getTimeout());
         }

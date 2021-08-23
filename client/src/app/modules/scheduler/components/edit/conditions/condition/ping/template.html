@@ -1,0 +1,7 @@
+<div class="ping">
+    <mat-form-field class="address" appearance="outline">
+        <mat-label>Ping na IP adresu</mat-label>
+        <input matInput [value]="condition.value.ipAddress" (input)="changeValue($event.target.value)">
+        <mat-hint *ngIf="!isValid">* Vyžadováno</mat-hint>
+    </mat-form-field>
+</div>

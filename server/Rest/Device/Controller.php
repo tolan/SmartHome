@@ -168,8 +168,9 @@ class Controller {
                 foreach ($data['modules'] as $moduleData) {
                     if ($moduleData['module']['id']) {
                         $moduleQuery = EntityQuery::create(Module::class, [[Control::class]], ['id' => $moduleData['module']['id']]);
-                        $module      = $this->_commonService->findOne($moduleQuery); /* @var $room Room */
-                        $module->setName($moduleData['module']['name'])->setSettingsData($moduleData['module']['settingsData']);
+                        $module      = $this->_commonService->findOne($moduleQuery); /* @var $module Module */
+                        $module->setName($moduleData['module']['name']);
+                        $module->setSettingsData($moduleData['module']['settingsData']);
                         foreach ($module->getControls()->toArray() as $control) {
                             $this->_commonService->remove($control);
                         }
@@ -179,6 +180,7 @@ class Controller {
                     } else {
                         $module = new Module();
                         $module->setName($moduleData['module']['name']);
+                        $module->setType($moduleData['module']['type']);
                         $module->setSettingsData($moduleData['module']['settingsData']);
                         $module->setDevice($device);
                         $this->_commonService->persist($module);
@@ -288,6 +290,8 @@ class Controller {
             $moduleQuery = (new RelationQuery(Module::class))->with(new RelationQuery(Control::class));
             $deviceQuery = (new EntityQuery(Device::class))->with($roomQuery)->with($moduleQuery)->with(new RelationQuery(Firmware::class));
 
+            $deviceQuery->conditions(['isActive' => true]);
+
             $devices = $this->_commonService->find($deviceQuery);
 
             foreach ($devices as $device) {
@@ -309,8 +313,11 @@ class Controller {
     public function modules(Request $request, Response $response) {
         $this->_authorize->checkPermissions($request, [PermissionType::TYPE_SECTION_DEVICES]);
 
+        $modules    = [];
         $modulesIds = array_column($request->getParsedBodyParam('modules'), 'id');
-        $modules    = $this->_deviceService->getModules($modulesIds);
+        if (!empty($modulesIds)) {
+            $modules = $this->_deviceService->getModules($modulesIds);
+        }
 
         $data = array_map(function (Module $module) {
             return $this->_transformModule($module);
@@ -337,6 +344,7 @@ class Controller {
         $controlData = $request->getParsedBodyParam('control')['controlData'];
 
         if ($device && $module && $control && $controlData) {
+            $controlData['previous'] = $control->getControlData()['value'];
             $control->setControlData($controlData);
             $this->_commonService->persist($control, true);
 

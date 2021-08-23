@@ -1,0 +1,14 @@
+<phpunit bootstrap="./tests/Unit/bootstrap.php">
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./app/</directory>
+            <exclude>
+            </exclude>
+        </whitelist>
+    </filter>
+    <testsuites>
+        <testsuite name="SmartHome">
+            <directory suffix=".php">tests/Unit/Tests/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
