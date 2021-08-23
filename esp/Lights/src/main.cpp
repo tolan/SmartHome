@@ -13,13 +13,13 @@
 
 const char *VERSION = "1.2.0";
 
-const char *ssid = "Zom-AP-IoT";
-const char *password = "100807962";
+const char *ssid = "YourSSID";
+const char *password = "YourPass";
 
 const int KEEP_ALIVE = 90; // in seconds
 int counter = KEEP_ALIVE * 1000;
 
-IPAddress serverIp(10, 109, 97, 190);
+IPAddress serverIp(192, 168, 1, 1);
 WebServer server(80);
 
 WiFiClient client;
@@ -199,7 +199,7 @@ void apiHandler(DynamicJsonDocument doc)
 
 void sendRegistration()
 {
-  if (client.connect(serverIp, 8888))
+  if (client.connect(serverIp, 80))
   {
     Serial.println("Connected to registration");
     const String message = "{\"mac\":\"" + WiFi.macAddress() + "\"}";
